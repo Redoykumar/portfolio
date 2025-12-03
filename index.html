@@ -108,9 +108,9 @@
         }
 
         // Initial theme setup (runs before onload)
+        const themeModes = ['dark', 'light', 'system']; // Defined here so initial function can access it
         (function() {
             const savedTheme = localStorage.getItem('theme');
-            let initialTheme = 'system'; // Default to system mode
             
             if (savedTheme && themeModes.includes(savedTheme)) {
                 window.currentThemeMode = savedTheme;
@@ -143,21 +143,15 @@
             --shadow-neon-lg: 0 0 30px rgba(0, 255, 255, 0.8), 0 0 60px rgba(0, 255, 255, 0.4);
         }
         
-        /* Apply background gradient based on theme */
-        body.dark {
-            background-image: radial-gradient(ellipse at top, var(--color-dark-accent) 0%, var(--color-primary-bg) 100%);
-        }
-        body:not(.dark) {
-            background-image: radial-gradient(ellipse at top, var(--color-dark-accent) 0%, var(--color-primary-bg) 100%);
-        }
-
         /* Custom Styles & Overrides */
+        /* Removed the conflicting body.dark and body:not(.dark) background-image rules */
         body {
             background-color: var(--color-primary-bg); 
             color: var(--color-light-text);
             overflow-x: hidden;
             min-height: 100vh;
-            transition: background-color 0.5s ease;
+            /* Transition for background color change during theme switch */
+            transition: background-color 0.5s ease; 
         }
 
         /* Scrollbar Styling */
@@ -880,7 +874,8 @@
         // ----------------------------------------------------
         
         const themeToggleBtn = document.getElementById('theme-toggle-btn');
-        const themeModes = ['dark', 'light', 'system']; // Cycle through these modes
+        // themeModes is now defined globally for initial script access
+        const themeModes = ['dark', 'light', 'system']; 
         
         function getSystemTheme() {
             return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
@@ -928,12 +923,14 @@
         }
         
         // Listener for the theme button click
-        themeToggleBtn.addEventListener('click', () => {
-            const currentIndex = themeModes.indexOf(window.currentThemeMode);
-            const nextIndex = (currentIndex + 1) % themeModes.length;
-            const newMode = themeModes[nextIndex];
-            switchTheme(newMode);
-        });
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                const currentIndex = themeModes.indexOf(window.currentThemeMode);
+                const nextIndex = (currentIndex + 1) % themeModes.length;
+                const newMode = themeModes[nextIndex];
+                switchTheme(newMode);
+            });
+        }
         
         // Listener for system theme change when in 'system' mode
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
@@ -944,7 +941,9 @@
         });
         
         // Apply initial icon on load (must be done after DOMContentLoaded or script tag load)
-        updateThemeIcon(window.currentThemeMode);
+        if (window.currentThemeMode) {
+            updateThemeIcon(window.currentThemeMode);
+        }
 
 
         // ----------------------------------------------------
