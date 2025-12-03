@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redoy Kumar Das | Full-Stack Software Engineer</title>
+    <meta name="description" content="Portfolio of Redoy Kumar Das, a Full-Stack Software Engineer specializing in modern web technologies.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Lucide Icons (Lightweight SVG icons) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        deepBlue: '#01010A', // Ultra Dark Navy
+                        navyBlue: '#0F0F1A', // Dark Indigo
+                        techCyan: '#00FFFF', // Electric Cyan (NEW primary color)
+                        techCyanHover: '#88FFFF',
+                        lightGray: '#E0E1DD',
+                    },
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif'],
+                        hero: ['Montserrat', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neon': '0 0 10px rgba(0, 255, 255, 0.4), 0 0 20px rgba(0, 255, 255, 0.2)',
+                        'neon-md': '0 0 15px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.3)',
+                        'neon-hover': '0 0 25px rgba(0, 255, 255, 0.8), 0 0 50px rgba(0, 255, 255, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles & Overrides */
+        body {
+            /* Ensuring maximum dark mode contrast */
+            background-color: #01010A; 
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #01010A; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0F0F1A; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00FFFF; /* NEW Color */
+        }
+
+        /* Glassmorphism Utilities - Darker and uses new border color */
+        .glass-panel {
+            background: rgba(15, 15, 26, 0.7); /* navyBlue with opacity */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 255, 0.15); /* NEW Color */
+        }
+
+        .glass-nav {
+            background: rgba(1, 1, 10, 0.85); /* deepBlue with opacity */
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.1); /* NEW Color */
+        }
+
+        /* Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Experience Timeline Style - STICKY FOR LARGE SCREENS */
+        .timeline-container {
+            position: relative;
+            max-width: 48rem; /* 4xl */
+            margin: 0 auto;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            width: 4px;
+            background-color: #0F0F1A; /* Dark Indigo */
+            top: 0;
+            bottom: 0;
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 1fr 40px 1fr; /* Left content, separator, right content */
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-dot {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .timeline-content {
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin: 0;
+        }
+
+        .timeline-left .timeline-content {
+            text-align: right;
+            border-right: 4px solid #00FFFF; /* NEW Color */
+            margin-right: -1rem;
+        }
+        .timeline-right .timeline-content {
+            text-align: left;
+            border-left: 4px solid #00FFFF; /* NEW Color */
+            margin-left: -1rem;
+        }
+
+        /* Mobile adjustments (Single column) */
+        @media (max-width: 767px) {
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .timeline-line {
+                left: 2rem;
+            }
+            .timeline-dot {
+                justify-content: flex-start;
+                margin-left: 2rem;
+                transform: translateX(-50%);
+            }
+            .timeline-left .timeline-content,
+            .timeline-right .timeline-content {
+                text-align: left;
+                margin-left: 2rem;
+                border-left: 4px solid #00FFFF; /* NEW Color */
+                border-right: none;
+                margin-right: 0;
+            }
+            .timeline-left .timeline-content {
+                margin-left: 2.25rem;
+            }
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 1; 
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- 3D Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <span class="font-heading font-bold text-2xl text-white tracking-wider">
+                        RK<span class="text-techCyan">D</span>
+                    </span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#about" class="hover:text-techCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
+                        <a href="#skills" class="hover:text-techCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">Skills</a>
+                        <a href="#experience" class="hover:text-techCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">Experience</a>
+                        <a href="#projects" class="hover:text-techCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">Projects</a>
+                        <a href="#education" class="hover:text-techCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">Education</a>
+                        <a href="#contact" class="text-techCyan border border-techCyan hover:bg-techCyan hover:text-deepBlue px-4 py-2 rounded-md text-sm font-medium transition-all shadow-neon hover:shadow-neon-hover">Contact Me</a>
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" id="mobile-menu-btn" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-navyBlue focus:outline-none">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div class="md:hidden hidden bg-deepBlue border-b border-gray-800" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#about" class="text-gray-300 hover:text-techCyan block px-3 py-2 rounded-md text-base font-medium">About</a>
+                <a href="#skills" class="text-gray-300 hover:text-techCyan block px-3 py-2 rounded-md text-base font-medium">Skills</a>
+                <a href="#experience" class="text-gray-300 hover:text-techCyan block px-3 py-2 rounded-md text-base font-medium">Experience</a>
+                <a href="#projects" class="text-gray-300 hover:text-techCyan block px-3 py-2 rounded-md text-base font-medium">Projects</a>
+                <a href="#education" class="text-gray-300 hover:text-techCyan block px-3 py-2 rounded-md text-base font-medium">Education</a>
+                <a href="#contact" class="text-techCyan block px-3 py-2 rounded-md text-base font-medium">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center relative px-4 pt-20" id="home">
+        <div class="text-center max-w-4xl z-10">
+            <p class="text-techCyan font-mono mb-4 reveal tracking-widest uppercase text-sm">Hello, I am</p>
+            <h1 class="text-5xl md:text-7xl font-hero font-bold text-white mb-6 tracking-tight reveal" style="transition-delay: 100ms;">
+                Redoy Kumar <span class="text-transparent bg-clip-text bg-gradient-to-r from-techCyan to-cyan-400">Das</span>
+            </h1>
+            <h2 class="text-2xl md:text-3xl font-heading text-gray-300 mb-8 reveal" style="transition-delay: 200ms;">
+                Full-Stack Software Architect & Engineer
+            </h2>
+            <p class="text-gray-400 max-w-2xl mx-auto mb-10 text-lg leading-relaxed reveal" style="transition-delay: 300ms;">
+                Building in the void. Architecting robust, scalable web solutions with a focus on dark-mode aesthetics and high-performance system design.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4 reveal" style="transition-delay: 400ms;">
+                <a href="#projects" class="group relative px-8 py-3 bg-transparent border border-techCyan text-techCyan font-semibold rounded overflow-hidden transition-all duration-300 hover:shadow-neon hover:text-deepBlue">
+                    <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-techCyan rounded-full group-hover:w-56 group-hover:h-56 opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -z-10"></span>
+                    <span class="relative z-10">View Work</span>
+                </a>
+                <a href="#contact" class="px-8 py-3 bg-navyBlue text-white font-semibold rounded hover:bg-indigo-900 transition-colors border border-zinc-800 hover:border-zinc-600">
+                    Contact Me
+                </a>
+            </div>
+        </div>
+        
+        <!-- Scroll Down Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-techCyan">
+            <i data-lucide="chevron-down" class="w-8 h-8"></i>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 px-4 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-16 text-center reveal">
+                <span class="border-b-4 border-techCyan pb-2">About Me</span>
+            </h2>
+            <div class="md:flex md:space-x-12 items-center">
+                <div class="md:w-1/3 mb-8 md:mb-0 reveal" style="transition-delay: 100ms;">
+                     <!-- Placeholder image for professional photo -->
+                    <div class="w-64 h-64 mx-auto bg-navyBlue rounded-full border-4 border-techCyan shadow-neon-md flex items-center justify-center text-4xl text-techCyan">
+                        <i data-lucide="user" class="w-24 h-24"></i>
+                    </div>
+                </div>
+                <div class="md:w-2/3 reveal" style="transition-delay: 200ms;">
+                    <p class="text-gray-300 text-lg leading-relaxed mb-4">
+                        I am Redoy Kumar Das, a dedicated Full-Stack Software Engineer with over 4 years of experience crafting high-performance, scalable web applications. My expertise spans across modern JavaScript frameworks, robust backend architecture, and cloud deployment on AWS.
+                    </p>
+                    <p class="text-gray-400 leading-relaxed">
+                        I thrive on solving complex technical challenges, focusing on clean code, optimal database design, and creating seamless user experiences. I am passionate about microservices and leveraging new technologies to drive innovation.
+                    </p>
+                    <div class="mt-6 flex gap-4">
+                        <a href="https://github.com/Redoykumar" target="_blank" class="inline-flex items-center text-techCyan hover:text-white transition-colors group">
+                            <i data-lucide="github" class="w-6 h-6 mr-2"></i> GitHub Profile
+                        </a>
+                        <a href="https://www.linkedin.com/in/redoy-kumar-das" target="_blank" class="inline-flex items-center text-techCyan hover:text-white transition-colors group">
+                             <i data-lucide="linkedin" class="w-6 h-6 mr-2"></i> LinkedIn Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-20 px-4 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-16 text-center reveal">
+                <span class="border-b-4 border-techCyan pb-2">Technical Arsenal</span>
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Skill Category 1 -->
+                <div class="glass-panel p-6 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md">
+                    <div class="text-techCyan mb-4 group-hover:scale-110 transition-transform"><i data-lucide="code-2" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-heading font-semibold mb-3 group-hover:text-techCyan transition-colors">Frontend</h3>
+                    <ul class="space-y-2 text-gray-300 text-sm">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>React.js / Next.js</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>TypeScript</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Tailwind CSS</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Three.js / WebGL</li>
+                    </ul>
+                </div>
+
+                <!-- Skill Category 2 -->
+                <div class="glass-panel p-6 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md" style="transition-delay: 100ms;">
+                    <div class="text-techCyan mb-4 group-hover:scale-110 transition-transform"><i data-lucide="server" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-heading font-semibold mb-3 group-hover:text-techCyan transition-colors">Backend</h3>
+                    <ul class="space-y-2 text-gray-300 text-sm">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Node.js / Express</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Python / Django</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>GraphQL</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Microservices</li>
+                    </ul>
+                </div>
+
+                <!-- Skill Category 3 -->
+                <div class="glass-panel p-6 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md" style="transition-delay: 200ms;">
+                    <div class="text-techCyan mb-4 group-hover:scale-110 transition-transform"><i data-lucide="database" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-heading font-semibold mb-3 group-hover:text-techCyan transition-colors">Database & Cloud</h3>
+                    <ul class="space-y-2 text-gray-300 text-sm">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>PostgreSQL / MongoDB</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>AWS (EC2, S3)</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Docker & Kubernetes</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Redis</li>
+                    </ul>
+                </div>
+
+                <!-- Skill Category 4 -->
+                <div class="glass-panel p-6 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md" style="transition-delay: 300ms;">
+                    <div class="text-techCyan mb-4 group-hover:scale-110 transition-transform"><i data-lucide="wrench" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-heading font-semibold mb-3 group-hover:text-techCyan transition-colors">Tools & Methods</h3>
+                    <ul class="space-y-2 text-gray-300 text-sm">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Git / CI/CD</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Agile / Scrum</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>System Architecture</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Testing (Jest/Cypress)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="py-20 px-4 z-10 relative">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-16 text-center reveal">
+                Professional <span class="text-techCyan">Timeline</span>
+            </h2>
+            
+            <div class="timeline-container">
+                <div class="timeline-line hidden md:block"></div>
+                
+                <!-- Role 1 -->
+                <div class="timeline-item reveal">
+                    <div class="timeline-content timeline-left md:col-span-1">
+                        <div class="p-6 glass-panel rounded-lg border-l-4 border-techCyan md:border-l-0 md:border-r-4">
+                            <h3 class="text-xl font-bold text-white">Senior Software Engineer</h3>
+                            <h4 class="text-techCyan font-bold mt-1">Tech Solutions Inc.</h4>
+                            <p class="mt-2 text-gray-300 text-sm leading-relaxed">
+                                Leading a team of 5 developers in re-architecting legacy monoliths into microservices. Improved system latency by 40% using Node.js and Redis caching strategies.
+                            </p>
+                            <div class="mt-3 flex flex-wrap gap-2 md:justify-end">
+                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">Node.js</span>
+                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">AWS</span>
+                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">React</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-dot">
+                        <div class="w-4 h-4 rounded-full border-2 border-techCyan bg-deepBlue z-10 shadow-[0_0_10px_#00FFFF]"></div>
+                    </div>
+                    <div class="timeline-content timeline-right md:col-span-1">
+                        <h4 class="text-techCyan font-bold md:text-left">2023 - Present</h4>
+                        <p class="text-gray-400 text-sm hidden md:block">Full-Time</p>
+                    </div>
+                </div>
+
+                <!-- Role 2 -->
+                <div class="timeline-item reveal">
+                    <div class="timeline-content timeline-left md:col-span-1 md:hidden">
+                        <h4 class="text-techCyan font-bold">2021 - 2023</h4>
+                        <p class="text-gray-400 text-sm">Full-Time</p>
+                    </div>
+                    <div class="timeline-content timeline-right md:col-span-1">
+                        <div class="p-6 glass-panel rounded-lg border-l-4 border-techCyan md:border-r-0 md:border-l-4">
+                            <h3 class="text-xl font-bold text-white">Full Stack Developer</h3>
+                            <h4 class="text-techCyan font-bold mt-1">Creative Digital</h4>
+                            <p class="mt-2 text-gray-300 text-sm leading-relaxed">
+                                Developed responsive e-commerce platforms using the MERN stack. Integrated payment gateways (Stripe/PayPal) and optimized frontend performance.
+                            </p>
+                            <div class="mt-3 flex flex-wrap gap-2 md:justify-start">
+                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">MongoDB</span>
+                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">Express</span>
+                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">React</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-dot">
+                        <div class="w-4 h-4 rounded-full border-2 border-techCyan bg-deepBlue z-10 shadow-[0_0_10px_#00FFFF]"></div>
+                    </div>
+                    <div class="timeline-content timeline-left md:col-span-1 md:block hidden">
+                        <h4 class="text-techCyan font-bold md:text-right">2021 - 2023</h4>
+                        <p class="text-gray-400 text-sm md:text-right">Full-Time</p>
+                    </div>
+                </div>
+                
+                <!-- Role 3 (New Placeholder Role) -->
+                 <div class="timeline-item reveal">
+                    <div class="timeline-content timeline-left md:col-span-1">
+                        <div class="p-6 glass-panel rounded-lg border-l-4 border-techCyan md:border-l-0 md:border-r-4">
+                            <h3 class="text-xl font-bold text-white">Junior Developer Intern</h3>
+                            <h4 class="text-techCyan font-bold mt-1">University Lab</h4>
+                            <p class="mt-2 text-gray-300 text-sm leading-relaxed">
+                                Assisted in building a data simulation tool for academic research, focusing on Python scripting and data visualization.
+                            </p>
+                            <div class="mt-3 flex flex-wrap gap-2 md:justify-end">
+                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">Python</span>
+                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">Pandas</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-dot">
+                        <div class="w-4 h-4 rounded-full border-2 border-techCyan bg-deepBlue z-10 shadow-[0_0_10px_#00FFFF]"></div>
+                    </div>
+                    <div class="timeline-content timeline-right md:col-span-1">
+                        <h4 class="text-techCyan font-bold md:text-left">2020 - 2021</h4>
+                        <p class="text-gray-400 text-sm hidden md:block">Internship</p>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-20 px-4 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-4 text-center reveal">Featured <span class="text-techCyan">Projects</span></h2>
+            <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto reveal">A showcase of complex problems solved through code.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Project 1 -->
+                <div class="group glass-panel rounded-xl overflow-hidden hover:shadow-neon-md transition-all duration-300 reveal">
+                    <div class="h-48 bg-navyBlue relative overflow-hidden">
+                        <!-- Pseudo-image placeholder since no real images allowed -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 to-black flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                             <i data-lucide="layout-dashboard" class="w-16 h-16 text-indigo-700 group-hover:text-techCyan transition-colors"></i>
+                        </div>
+                        <div class="absolute inset-0 bg-deepBlue opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex items-center justify-center gap-4">
+                             <a href="https://github.com/Redoykumar" target="_blank" class="p-2 bg-techCyan text-deepBlue rounded-full hover:bg-white transition-colors" title="View Code"><i data-lucide="github" class="w-5 h-5"></i></a>
+                             <a href="#" target="_blank" class="p-2 bg-techCyan text-deepBlue rounded-full hover:bg-white transition-colors" title="Live Demo"><i data-lucide="external-link" class="w-5 h-5"></i></a>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 group-hover:text-techCyan transition-colors">SaaS Analytics Dashboard</h3>
+                        <p class="text-gray-400 text-sm mb-4">Real-time data visualization platform for enterprise metrics using Highcharts and WebSocket connections.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">React</span>
+                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">D3.js</span>
+                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">Firebase</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="group glass-panel rounded-xl overflow-hidden hover:shadow-neon-md transition-all duration-300 reveal" style="transition-delay: 100ms;">
+                    <div class="h-48 bg-navyBlue relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 to-black flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                             <i data-lucide="shopping-bag" class="w-16 h-16 text-indigo-700 group-hover:text-techCyan transition-colors"></i>
+                        </div>
+                        <div class="absolute inset-0 bg-deepBlue opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex items-center justify-center gap-4">
+                             <a href="https://github.com/Redoykumar" target="_blank" class="p-2 bg-techCyan text-deepBlue rounded-full hover:bg-white transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
+                             <a href="#" target="_blank" class="p-2 bg-techCyan text-deepBlue rounded-full hover:bg-white transition-colors"><i data-lucide="external-link" class="w-5 h-5"></i></a>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 group-hover:text-techCyan transition-colors">Nova E-Commerce</h3>
+                        <p class="text-gray-400 text-sm mb-4">Headless e-commerce solution featuring server-side rendering for SEO and instant page loads.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">Next.js</span>
+                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">Stripe</span>
+                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">PostgreSQL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="group glass-panel rounded-xl overflow-hidden hover:shadow-neon-md transition-all duration-300 reveal" style="transition-delay: 200ms;">
+                    <div class="h-48 bg-navyBlue relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 to-black flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                             <i data-lucide="message-square" class="w-16 h-16 text-indigo-700 group-hover:text-techCyan transition-colors"></i>
+                        </div>
+                        <div class="absolute inset-0 bg-deepBlue opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex items-center justify-center gap-4">
+                             <a href="https://github.com/Redoykumar" target="_blank" class="p-2 bg-techCyan text-deepBlue rounded-full hover:bg-white transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
+                             <a href="#" target="_blank" class="p-2 bg-techCyan text-deepBlue rounded-full hover:bg-white transition-colors"><i data-lucide="external-link" class="w-5 h-5"></i></a>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 group-hover:text-techCyan transition-colors">AI Chat Interface</h3>
+                        <p class="text-gray-400 text-sm mb-4">A GPT wrapper application with custom system prompts, markdown support, and chat history storage.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">OpenAI API</span>
+                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">TypeScript</span>
+                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">Vite</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" class="py-20 px-4 relative z-10">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-16 text-center reveal">
+                Academic <span class="text-techCyan">Background</span>
+            </h2>
+            
+            <div class="space-y-8">
+                 <!-- Degree 1 -->
+                 <div class="glass-panel p-8 rounded-2xl relative overflow-hidden reveal group hover:shadow-neon-md transition-all duration-300">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="graduation-cap" class="w-24 h-24 text-techCyan"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <span class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider text-techCyan uppercase bg-navyBlue border border-zinc-800 rounded-full">Completed: May 2019</span>
+                        <h3 class="text-2xl font-bold text-white mb-1 group-hover:text-techCyan transition-colors">Bachelor of Computer Science & Engineering (CSE)</h3>
+                        <p class="text-lg text-gray-400 mb-4">SOUTHEAST UNIVERSITY, Dhaka, Bangladesh</p>
+                        <p class="text-gray-400 text-sm leading-relaxed max-w-2xl">
+                            Specialized studies focusing on core programming paradigms, algorithm design, database systems, and software development methodologies.
+                        </p>
+                    </div>
+                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 px-4 relative z-10">
+        <div class="max-w-4xl mx-auto glass-panel p-8 md:p-12 rounded-2xl border-t border-techCyan reveal">
+            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-6 text-center text-white">Let's <span class="text-techCyan">Collaborate</span></h2>
+            <p class="text-center text-gray-300 mb-10">Have a project in mind or want to discuss the latest tech? Send me a message.</p>
+            
+            <form id="contact-form" onsubmit="handleFormSubmit(event);" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-400 mb-2">Name</label>
+                        <input type="text" id="name" name="name" required class="w-full bg-navyBlue border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-techCyan focus:ring-1 focus:ring-techCyan transition-all placeholder-gray-600" placeholder="John Doe">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-400 mb-2">Email</label>
+                        <input type="email" id="email" name="email" required class="w-full bg-navyBlue border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-techCyan focus:ring-1 focus:ring-techCyan transition-all placeholder-gray-600" placeholder="john@example.com">
+                    </div>
+                </div>
+                <div>
+                    <label for="message" class="block text-sm font-medium text-gray-400 mb-2">Message</label>
+                    <textarea id="message" name="message" rows="4" required class="w-full bg-navyBlue border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-techCyan focus:ring-1 focus:ring-techCyan transition-all placeholder-gray-600" placeholder="Tell me about your project..."></textarea>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="px-8 py-3 bg-gradient-to-r from-techCyan to-cyan-600 text-deepBlue font-bold rounded-lg hover:shadow-neon transform hover:-translate-y-1 transition-all duration-300">
+                        Send Message
+                    </button>
+                </div>
+            </form>
+
+            <!-- Message Box (Custom Alert) -->
+            <div id="message-box" class="hidden fixed inset-0 bg-deepBlue bg-opacity-90 z-[100] flex items-center justify-center">
+                <div class="bg-navyBlue p-8 rounded-xl shadow-neon-hover border border-techCyan max-w-sm w-full text-center">
+                    <i data-lucide="check-circle" class="w-12 h-12 text-techCyan mx-auto mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2 text-white" id="message-box-title">Success!</h3>
+                    <p class="text-gray-400 mb-6" id="message-box-body">Thank you for your message. I'll get back to you shortly. (This is a demo, no actual email sent).</p>
+                    <button onclick="hideMessageBox()" class="px-6 py-2 bg-techCyan text-deepBlue font-semibold rounded-lg hover:bg-techCyanHover transition-colors">Close</button>
+                </div>
+            </div>
+
+
+            <div class="mt-12 flex justify-center space-x-8">
+                <!-- Updated GitHub and LinkedIn URLs -->
+                <a href="https://github.com/Redoykumar" target="_blank" class="text-gray-400 hover:text-techCyan hover:scale-110 transition-all" title="GitHub"><i data-lucide="github" class="w-6 h-6"></i></a>
+                <a href="https://www.linkedin.com/in/redoy-kumar-das" target="_blank" class="text-gray-400 hover:text-techCyan hover:scale-110 transition-all" title="LinkedIn"><i data-lucide="linkedin" class="w-6 h-6"></i></a>
+                <a href="#" target="_blank" class="text-gray-400 hover:text-techCyan hover:scale-110 transition-all" title="Twitter (Placeholder)"><i data-lucide="twitter" class="w-6 h-6"></i></a>
+                <a href="mailto:email@example.com" class="text-gray-400 hover:text-techCyan hover:scale-110 transition-all" title="Email (Placeholder)"><i data-lucide="mail" class="w-6 h-6"></i></a>
+            </div>
+            <p class="text-center text-gray-500 text-xs mt-4">
+                (Note: Live Demo and Email links use placeholder URLs.)
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 bg-deepBlue text-center border-t border-zinc-900 relative z-10">
+        <p class="text-gray-500 text-sm">
+            © 2023 Redoy Kumar Das. Designed & Built with <span class="text-techCyan">Code</span>.
+        </p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // --- GLOBAL MESSAGE BOX FUNCTIONS (Replaces alert()) ---
+        const messageBox = document.getElementById('message-box');
+        const messageBoxTitle = document.getElementById('message-box-title');
+        const messageBoxBody = document.getElementById('message-box-body');
+
+        function showMessageBox(title, body) {
+            messageBoxTitle.textContent = title;
+            messageBoxBody.textContent = body;
+            messageBox.classList.remove('hidden');
+        }
+
+        function hideMessageBox() {
+            messageBox.classList.add('hidden');
+        }
+
+        // --- CONTACT FORM SUBMISSION AND VALIDATION ---
+        function isValidEmail(email) {
+            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault(); 
+            
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            if (!name || !email || !message) {
+                showMessageBox('Error', 'Please fill in all required fields (Name, Email, Message).');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showMessageBox('Error', 'Please enter a valid email address.');
+                return;
+            }
+
+            // Simulate form submission success
+            showMessageBox('Success!', 'Thank you for your message! (Demo Only - Form data not actually sent).');
+            document.getElementById('contact-form').reset();
+        }
+
+
+        // Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // --- SCROLL ANIMATIONS (Intersection Observer) ---
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+
+        // --- THREE.JS BACKGROUND ANIMATION with ZOOM ---
+        const initThreeJS = () => {
+            const canvas = document.getElementById('bg-canvas');
+            const scene = new THREE.Scene();
+            
+            // Fog matches the new bg-deepBlue
+            scene.fog = new THREE.FogExp2(0x01010A, 0.002);
+
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
+
+            // Group to hold all 3D objects
+            const worldGroup = new THREE.Group();
+            scene.add(worldGroup);
+
+            // 1. Create Floating "Code Block" Cubes (Wireframes)
+            const geometryBox = new THREE.BoxGeometry(1, 1, 1);
+            
+            // Material - Electric Cyan
+            const materialBox = new THREE.MeshBasicMaterial({ 
+                color: 0x00FFFF, // Electric Cyan
+                wireframe: true,
+                transparent: true,
+                opacity: 0.15 
+            });
+
+            const cubes = [];
+            const cubeCount = 30; 
+
+            for(let i = 0; i < cubeCount; i++) {
+                const cube = new THREE.Mesh(geometryBox, materialBox);
+                
+                cube.position.x = (Math.random() - 0.5) * 40;
+                cube.position.y = (Math.random() - 0.5) * 40;
+                cube.position.z = (Math.random() - 0.5) * 30 - 10; 
+
+                const scale = Math.random() * 1.5 + 0.5;
+                cube.scale.set(scale, scale, scale);
+
+                cube.userData = {
+                    rotX: (Math.random() - 0.5) * 0.02,
+                    rotY: (Math.random() - 0.5) * 0.02
+                };
+
+                worldGroup.add(cube);
+                cubes.push(cube);
+            }
+
+            // 2. Create Particle Network (Stars/Nodes)
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 250;
+            const posArray = new Float32Array(particlesCount * 3);
+
+            for(let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 60;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.15,
+                color: 0xE0E1DD, // Light gray for contrast
+                transparent: true,
+                opacity: 0.6,
+            });
+
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            worldGroup.add(particlesMesh);
+
+            // --- CAMERA SETUP & ZOOM LOGIC ---
+            camera.position.z = 15;
+            let targetZ = 15;
+            const ZOOM_SPEED = 0.5;
+            const MIN_Z = 5; // Zoom In Limit
+            const MAX_Z = 50; // Zoom Out Limit
+
+            const handleScroll = (event) => {
+                // Determine the direction of scroll
+                const delta = event.deltaY || event.detail || event.wheelDelta;
+
+                if (delta > 0) {
+                    // Scrolling down (Zoom Out)
+                    targetZ += ZOOM_SPEED;
+                } else if (delta < 0) {
+                    // Scrolling up (Zoom In)
+                    targetZ -= ZOOM_SPEED;
+                }
+
+                // Clamp the target Z position within limits
+                targetZ = Math.max(MIN_Z, Math.min(MAX_Z, targetZ));
+            }
+            
+            // Use 'wheel' for better control across browsers
+            window.addEventListener('wheel', handleScroll);
+
+            // Mouse interaction for rotation
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 0;
+            let targetY = 0;
+
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX - windowHalfX);
+                mouseY = (event.clientY - windowHalfY);
+            });
+
+            // Animation Loop
+            const clock = new THREE.Clock();
+
+            const animate = () => {
+                requestAnimationFrame(animate);
+                const elapsedTime = clock.getElapsedTime();
+
+                // 1. Smooth Camera Rotation (Mouse X/Y)
+                targetX = mouseX * 0.001;
+                targetY = mouseY * 0.001;
+                worldGroup.rotation.y += 0.05 * (targetX - worldGroup.rotation.y);
+                worldGroup.rotation.x += 0.05 * (targetY - worldGroup.rotation.x);
+
+                // 2. Smooth Camera Zoom (Mouse Wheel)
+                // Linear interpolation (lerp) for smooth zoom
+                camera.position.z += (targetZ - camera.position.z) * 0.05;
+
+                // 3. Object Animations
+                cubes.forEach(cube => {
+                    cube.rotation.x += cube.userData.rotX;
+                    cube.rotation.y += cube.userData.rotY;
+                    
+                    // Gentle floating effect
+                    cube.position.y += Math.sin(elapsedTime + cube.position.x) * 0.005;
+                });
+
+                // Rotate entire particle system slowly
+                particlesMesh.rotation.y = elapsedTime * 0.05;
+                particlesMesh.rotation.x = elapsedTime * 0.02;
+
+                renderer.render(scene, camera);
+            };
+
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        };
+
+        window.addEventListener('load', initThreeJS);
+
+    </script>
+</body>
+</html>
