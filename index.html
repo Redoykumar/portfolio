@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HYROUND | Digital Sphere Portfolio</title>
-    <meta name="description" content="A minimalist, futuristic portfolio with a glowing digital sphere background and multi-theme support.">
+    <title>Redoy Kumar Das | Microservices, Django, Laravel Developer Portfolio</title>
+    <meta name="description" content="Official portfolio of Redoy Kumar Das, a Software Engineer and Backend Lead specializing in Microservices, PHP (Laravel), Python (Django), and full-stack development.">
+    <meta name="author" content="Redoy Kumar Das">
+    <meta name="keywords" content="Redoy Kumar Das, Software Engineer, Backend Lead, Microservices, Laravel, Django, Full-Stack, PHP, Python, Portfolio, Dhaka">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -332,33 +334,36 @@
     <!-- 3D Background Canvas -->
     <canvas id="bg-canvas"></canvas>
 
-    <!-- Hero Overlay for Text (HYROUND) and Birds (Z-index 10) -->
-    <div id="hero-overlay" class="pointer-events-none">
+    <div id="hero-overlay" class="pointer-events-none absolute inset-0 z-10">
         
-        <!-- HYROUND Title positioned over the 3D Sphere -->
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <h1 class="text-7xl md:text-9xl font-hero font-extrabold text-primaryBg opacity-70 tracking-widest uppercase" 
-                style="pointer-events: none; text-shadow: 0 0 15px rgba(0, 0, 0, 0.9);">
-                H Y R O U N D
+        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            
+            <h1 class="font-hero font-extrabold text-7xl md:text-8xl tracking-widest uppercase transition duration-500" 
+                style="pointer-events: none; 
+                       color: var(--color-light-text); 
+                       text-shadow: 0 0 10px rgba(0, 0, 0, 0.9), 0 0 20px var(--color-accent-cyan);">
+                REDOY KUMAR DAS
             </h1>
+            
+            <h2 class="font-heading font-medium text-xl md:text-3xl text-subText mt-4 transition duration-500" 
+                style="pointer-events: none; 
+                       text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);">
+                SOFTWARE ENGINEER | BACKEND LEAD
+            </h2>
         </div>
-
-        <!-- Stylized Geometric Birds SVG -->
+    
         <svg id="geometric-birds" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="transition-transform hover:scale-110 duration-500">
-            <!-- Bird 1 -->
             <polygon points="0,30 20,10 40,30 20,40" stroke-width="0.5" class="transition-transform duration-1000" style="transform: translate(0px, 0px); opacity: 1;">
                 <animate attributeName="transform" type="translate" from="0 0" to="10 0" dur="5s" repeatCount="indefinite" additive="sum"/>
             </polygon>
-            <!-- Bird 2 -->
             <polygon points="30,40 50,20 70,40 50,50" stroke-width="0.5" class="transition-transform duration-1000" style="transform: translate(0px, 0px); opacity: 0.8;">
                 <animate attributeName="transform" type="translate" from="0 0" to="5 0" dur="4s" repeatCount="indefinite" additive="sum"/>
             </polygon>
-            <!-- Bird 3 -->
             <polygon points="60,20 75,5 90,20 75,25" stroke-width="0.5" class="transition-transform duration-1000" style="transform: translate(0px, 0px); opacity: 0.9;">
                 <animate attributeName="transform" type="translate" from="0 0" to="15 0" dur="6s" repeatCount="indefinite" additive="sum"/>
             </polygon>
         </svg>
-
+    
     </div>
 
 
@@ -425,7 +430,7 @@
     <!-- Hero Section -->
     <section class="min-h-screen flex items-center justify-center relative px-4 pt-20" id="home">
         <div class="text-center max-w-4xl z-10 pointer-events-auto">
-            <p class="text-subText font-mono mb-4 reveal tracking-widest uppercase text-sm">Welcome to the Digital Sphere</p>
+            <p class="text-subText font-mono mb-4 reveal tracking-widest uppercase text-sm"> Welcome to My Profile</p>
             <h1 class="text-5xl md:text-7xl font-hero font-bold text-lightText mb-6 tracking-tight reveal" style="transition-delay: 100ms;">
                 Redoy Kumar <span class="text-transparent bg-clip-text bg-gradient-to-r from-accentCyan to-lightText">Das</span>
             </h1>
