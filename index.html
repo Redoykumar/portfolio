@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redoy Kumar Das | Microservices, Django, Laravel Developer Portfolio</title>
+    <title>Redoy Kumar Das | Full-Stack Software Architect</title>
     <meta name="description" content="Official portfolio of Redoy Kumar Das, a Software Engineer and Backend Lead specializing in Microservices, PHP (Laravel), Python (Django), and full-stack development.">
     <meta name="author" content="Redoy Kumar Das">
     <meta name="keywords" content="Redoy Kumar Das, Software Engineer, Backend Lead, Microservices, Laravel, Django, Full-Stack, PHP, Python, Portfolio, Dhaka">
@@ -26,20 +26,24 @@
         // Define color palettes for both dark and light modes
         const themeColors = {
             dark: {
-                primaryBg: '#080A1A', 
-                secondaryBg: '#10142C',
-                accentCyan: '#00FFFF',
-                lightText: '#E0F7FA',
-                subText: '#9CA3AF',
-                darkAccent: '#1A203F',
+                primaryBg: '#080A1A',        // Deep Space Black
+                secondaryBg: '#10142C',      // Dark Navy
+                accentColor: '#00FFFF',      // Neon Cyan
+                highContrastText: '#E0F7FA', // Bright Text
+                lowContrastText: '#9CA3AF',  // Subdued Text
+                darkAccent: '#1A203F',       // Darker Secondary for borders/lines
+                shadowBase: 'rgba(0, 255, 255, 0.6)', // Cyan Shadow
+                threeJsColor: 0x00FFFF
             },
             light: {
-                primaryBg: '#F0F4F8', // Light Gray-Blue
-                secondaryBg: '#FFFFFF', // White
-                accentCyan: '#007BFF', // Bright Blue
-                lightText: '#1F2937', // Dark Gray
-                subText: '#6B7280', // Medium Gray
-                darkAccent: '#E5E7EB', // Very Light Gray
+                primaryBg: '#FFFFFF',        // Pure White Background
+                secondaryBg: '#F3F4F6',      // Very Light Gray
+                accentColor: '#0056B3',      // Vibrant Deep Blue (high contrast)
+                highContrastText: '#1F2937', // Dark Gray Text
+                lowContrastText: '#6B7280',  // Medium Gray Subtext
+                darkAccent: '#E5E7EB',       // Light border/line
+                shadowBase: 'rgba(0, 86, 179, 0.8)', // Deep Blue Shadow
+                threeJsColor: 0x0056B3
             }
         };
 
@@ -48,12 +52,12 @@
             theme: {
                 extend: {
                     colors: {
-                        // Dynamically map colors based on the current mode (defaulting to dark)
+                        // Dynamically map colors based on the current mode
                         primaryBg: 'var(--color-primary-bg)', 
                         secondaryBg: 'var(--color-secondary-bg)', 
-                        accentCyan: 'var(--color-accent-cyan)',
-                        lightText: 'var(--color-light-text)',
-                        subText: 'var(--color-sub-text)',
+                        accentCyan: 'var(--color-accent-cyan)', // Renamed from accentColor in CSS vars
+                        lightText: 'var(--color-light-text)',    // Renamed from highContrastText
+                        subText: 'var(--color-sub-text)',        // Renamed from lowContrastText
                         darkAccent: 'var(--color-dark-accent)', 
                     },
                     fontFamily: {
@@ -62,7 +66,6 @@
                         hero: ['Montserrat', 'sans-serif'],
                     },
                     boxShadow: {
-                        // Define shadows using CSS variables for theme switching
                         'neon-sm': 'var(--shadow-neon-sm)',
                         'neon-md': 'var(--shadow-neon-md)',
                         'neon-lg': 'var(--shadow-neon-lg)',
@@ -76,55 +79,51 @@
             const root = document.documentElement;
             const colors = themeColors[mode];
             
-            // Apply background and text colors
+            // Apply color variables
             root.style.setProperty('--color-primary-bg', colors.primaryBg);
             root.style.setProperty('--color-secondary-bg', colors.secondaryBg);
-            root.style.setProperty('--color-accent-cyan', colors.accentCyan);
-            root.style.setProperty('--color-light-text', colors.lightText);
-            root.style.setProperty('--color-sub-text', colors.subText);
+            root.style.setProperty('--color-accent-cyan', colors.accentColor);
+            root.style.setProperty('--color-light-text', colors.highContrastText);
+            root.style.setProperty('--color-sub-text', colors.lowContrastText);
             root.style.setProperty('--color-dark-accent', colors.darkAccent);
 
             // Apply specific box shadow colors for the accent
-            const shadowColor = (mode === 'dark') ? 'rgba(0, 255, 255, 0.6)' : 'rgba(0, 123, 255, 0.6)'; // Cyan for dark, Blue for light
-            root.style.setProperty('--shadow-neon-sm', `0 0 8px ${shadowColor.replace('0.6', '0.4')}`);
-            root.style.setProperty('--shadow-neon-md', `0 0 15px ${shadowColor}, 0 0 30px ${shadowColor.replace('0.6', '0.3')}`);
-            root.style.setProperty('--shadow-neon-lg', `0 0 30px ${shadowColor.replace('0.6', '0.8')}, 0 0 60px ${shadowColor.replace('0.6', '0.4')}`);
+            const shadowBase = colors.shadowBase;
             
-            // Toggle the 'dark' class for standard Tailwind functionality
+            root.style.setProperty('--shadow-neon-sm', `0 0 8px ${shadowBase.replace('0.8', '0.4').replace('0.6', '0.4')}`);
+            root.style.setProperty('--shadow-neon-md', `0 0 15px ${shadowBase}, 0 0 30px ${shadowBase.replace('0.8', '0.3').replace('0.6', '0.3')}`);
+            root.style.setProperty('--shadow-neon-lg', `0 0 30px ${shadowBase.replace('0.8', '0.8').replace('0.6', '0.8')}, 0 0 60px ${shadowBase.replace('0.8', '0.4').replace('0.6', '0.4')}`);
+            
+            // Toggle the 'dark' class
             if (mode === 'dark') {
                 root.classList.add('dark');
             } else {
                 root.classList.remove('dark');
             }
             
-            // Update Three.js particle color if renderer exists
+            // Update Three.js particle color
             if (window.updateThreeJsColor) {
-                const threeJsColor = (mode === 'dark') ? 0x00FFFF : 0x007BFF; // Cyan vs Blue
-                window.updateThreeJsColor(threeJsColor);
+                window.updateThreeJsColor(colors.threeJsColor);
             }
         }
 
         // Initial theme setup (runs before onload)
         (function() {
             const savedTheme = localStorage.getItem('theme');
-            let initialTheme = 'dark';
+            let initialTheme = 'system'; // Default to system mode
             
-            if (savedTheme === 'light' || savedTheme === 'dark') {
-                initialTheme = savedTheme;
-            } else if (savedTheme === 'system') {
-                // Check current system preference
-                initialTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            if (savedTheme && themeModes.includes(savedTheme)) {
+                window.currentThemeMode = savedTheme;
             } else {
-                 // Default to dark mode if nothing is saved
-                 initialTheme = 'dark';
+                 window.currentThemeMode = 'system'; // Default if nothing is saved
             }
             
-            // Store the mode in a global variable for theme switcher UI update
-            // We store the requested mode (dark, light, or system)
-            window.currentThemeMode = savedTheme || 'dark';
-
-            // Apply the actual visual theme
-            applyTheme(initialTheme);
+            let actualTheme = window.currentThemeMode;
+            if (window.currentThemeMode === 'system') {
+                actualTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            }
+            
+            applyTheme(actualTheme);
         })();
 
     </script>
@@ -143,12 +142,18 @@
             --shadow-neon-md: 0 0 15px rgba(0, 255, 255, 0.6), 0 0 30px rgba(0, 255, 255, 0.3);
             --shadow-neon-lg: 0 0 30px rgba(0, 255, 255, 0.8), 0 0 60px rgba(0, 255, 255, 0.4);
         }
+        
+        /* Apply background gradient based on theme */
+        body.dark {
+            background-image: radial-gradient(ellipse at top, var(--color-dark-accent) 0%, var(--color-primary-bg) 100%);
+        }
+        body:not(.dark) {
+            background-image: radial-gradient(ellipse at top, var(--color-dark-accent) 0%, var(--color-primary-bg) 100%);
+        }
 
         /* Custom Styles & Overrides */
         body {
-            /* Use variable for background */
             background-color: var(--color-primary-bg); 
-            background-image: radial-gradient(ellipse at top, var(--color-dark-accent) 0%, var(--color-primary-bg) 100%);
             color: var(--color-light-text);
             overflow-x: hidden;
             min-height: 100vh;
@@ -161,30 +166,39 @@
         ::-webkit-scrollbar-thumb { 
             background: var(--color-accent-cyan); 
             border-radius: 4px;
+            transition: background 0.5s;
         }
-        ::-webkit-scrollbar-thumb:hover { background: var(--color-accent-cyan); filter: brightness(1.2); }
+        ::-webkit-scrollbar-thumb:hover { 
+            background: var(--color-accent-cyan); 
+            filter: brightness(1.2); 
+        }
 
-        /* Glassmorphism Utilities - Refined */
+        /* Glassmorphism Utilities - Refined for better light/dark contrast */
         .glass-panel {
-            background: color-mix(in srgb, var(--color-secondary-bg) 75%, transparent); 
-            backdrop-filter: blur(15px); /* Increased blur */
+            background: color-mix(in srgb, var(--color-secondary-bg) 80%, transparent); 
+            backdrop-filter: blur(15px); 
             -webkit-backdrop-filter: blur(15px);
             /* Slightly thicker, more defined border */
-            border: 2px solid color-mix(in srgb, var(--color-accent-cyan) 25%, transparent); 
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), var(--shadow-neon-sm); /* Added subtle neon glow to base shadow */
+            border: 2px solid color-mix(in srgb, var(--color-accent-cyan) 30%, transparent); 
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), var(--shadow-neon-sm); 
             transition: background 0.5s, border 0.5s, box-shadow 0.3s;
         }
         .glass-panel:hover {
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7), var(--shadow-neon-md); /* Enhanced neon on hover */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), var(--shadow-neon-md); 
         }
 
-
+        /* Navbar Styling */
         .glass-nav {
             background: color-mix(in srgb, var(--color-primary-bg) 95%, transparent); 
             backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--color-dark-accent);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
-            transition: background 0.5s, border 0.5s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: background 0.5s, border 0.5s, box-shadow 0.3s; 
+        }
+        
+        /* Navbar Scrolled State */
+        .glass-nav-scrolled {
+             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), var(--shadow-neon-sm);
         }
 
         /* Animation Classes */
@@ -198,14 +212,13 @@
             transform: translateY(0);
         }
 
-        /* Experience Timeline Style - Simplified for better responsiveness */
+        /* Timeline Styles (Maintained) */
         .timeline-container {
             display: grid;
             grid-template-columns: 1fr 20px 1fr;
             gap: 0 10px;
             position: relative;
         }
-
         .timeline-line {
             position: absolute;
             left: 50%;
@@ -213,34 +226,25 @@
             height: 100%;
             transform: translateX(-50%);
             background-color: var(--color-dark-accent);
+            transition: background-color 0.5s;
         }
-
-        .timeline-item {
-            display: contents; /* Allows child elements to span columns */
-        }
-
+        .timeline-item { display: contents; }
         .timeline-dot {
             grid-column: 2 / 3;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px 0; /* Add vertical spacing */
+            padding: 20px 0; 
         }
-
-        .timeline-content {
-            padding: 20px;
-        }
-
+        .timeline-content { padding: 20px; }
         .timeline-left {
             grid-column: 1 / 2;
             text-align: right;
         }
-
         .timeline-right {
             grid-column: 3 / 4;
             text-align: left;
         }
-
         .timeline-dot div { 
             background: var(--color-secondary-bg); 
             border-color: var(--color-accent-cyan); 
@@ -249,44 +253,39 @@
             border-radius: 50%;
             border: 3px solid var(--color-accent-cyan);
             z-index: 10;
+            transition: background 0.5s, border-color 0.5s;
         }
 
-        /* Mobile adjustments for timeline (Single Column) */
+        /* Mobile adjustments for timeline */
         @media (max-width: 767px) {
             .timeline-container {
-                grid-template-columns: 20px 1fr; /* Dot column on left, content on right */
+                grid-template-columns: 20px 1fr; 
                 gap: 0 15px;
             }
             .timeline-line {
-                left: 10px; /* Move line to the left edge of the dot column */
+                left: 10px; 
                 transform: translateX(0);
             }
-
             .timeline-item > * {
-                grid-column: auto; /* Reset grid column for mobile */
+                grid-column: auto; 
                 text-align: left !important;
                 padding-left: 0;
                 padding-right: 0;
             }
-
             .timeline-dot {
                 grid-column: 1 / 2;
                 padding: 15px 0;
             }
-
             .timeline-content.timeline-left,
             .timeline-content.timeline-right {
                 grid-column: 2 / 3;
             }
-
-            /* Apply border styles consistently for mobile */
             .timeline-item > div:not(.timeline-dot) > div {
                  border-left: 4px solid var(--color-accent-cyan); 
                  border-right: none !important;
             }
-
             .timeline-item > div:not(.timeline-dot) {
-                 padding-left: 10px; /* Shift content slightly */
+                 padding-left: 10px; 
             }
         }
         
@@ -301,7 +300,7 @@
             opacity: 0.8; 
             transition: opacity 0.5s;
         }
-
+        
         /* Geometric Birds SVG styling */
         #geometric-birds {
             position: absolute;
@@ -334,6 +333,7 @@
     <!-- 3D Background Canvas -->
     <canvas id="bg-canvas"></canvas>
 
+    <!-- Overlay content, pointer-events: none is critical for Three.js interaction -->
     <div id="hero-overlay" class="pointer-events-none absolute inset-0 z-10">
         
         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
@@ -341,13 +341,14 @@
             <h1 class="font-hero font-extrabold text-7xl md:text-8xl tracking-widest uppercase transition duration-500" 
                 style="pointer-events: none; 
                        color: var(--color-light-text); 
-                       text-shadow: 0 0 10px rgba(0, 0, 0, 0.9), 0 0 20px var(--color-accent-cyan);">
+                       /* Dynamic text shadow to match theme accent */
+                       text-shadow: 0 0 10px rgba(0, 0, 0, 0.6), 0 0 20px var(--color-accent-cyan);">
                 REDOY KUMAR DAS
             </h1>
             
             <h2 class="font-heading font-medium text-xl md:text-3xl text-subText mt-4 transition duration-500" 
                 style="pointer-events: none; 
-                       text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);">
+                       text-shadow: 0 0 5px rgba(0, 0, 0, 0.4);">
                 SOFTWARE ENGINEER | BACKEND LEAD
             </h2>
         </div>
@@ -392,7 +393,7 @@
 
                     <!-- Theme Switcher -->
                     <div class="ml-4 flex items-center">
-                        <button id="theme-toggle-btn" class="p-2 rounded-full text-lightText bg-secondaryBg hover:text-accentCyan transition-all duration-300 hover:shadow-neon-sm" title="Toggle Theme (Dark, Light, System)">
+                        <button id="theme-toggle-btn" class="p-2 rounded-full text-lightText bg-secondaryBg hover:text-accentCyan transition-all duration-300 hover:shadow-neon-sm" title="Toggle Theme (Dark, Light, System)" aria-label="Toggle Theme between Dark, Light, and System preferences.">
                             <!-- The icon content will be set by JavaScript -->
                             <i data-lucide="sun-moon" class="w-6 h-6"></i>
                         </button>
@@ -406,7 +407,7 @@
 
                 <!-- Mobile menu button -->
                 <div class="-mr-2 flex md:hidden">
-                    <button type="button" id="mobile-menu-btn" class="inline-flex items-center justify-center p-2 rounded-md text-lightText hover:text-primaryBg hover:bg-lightText focus:outline-none transition-colors">
+                    <button type="button" id="mobile-menu-btn" class="inline-flex items-center justify-center p-2 rounded-md text-lightText hover:text-primaryBg hover:bg-lightText focus:outline-none transition-colors" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open main menu">
                         <i data-lucide="menu" class="w-6 h-6"></i>
                     </button>
                 </div>
@@ -472,10 +473,10 @@
                 </div>
                 <div class="md:w-2/3 reveal text-subText" style="transition-delay: 200ms;">
                     <p class="text-lg leading-relaxed mb-4">
-                        I am Redoy Kumar Das, a dedicated Full-Stack Software Architect with over 4 years of experience crafting high-performance, scalable web applications. My expertise spans across modern JavaScript frameworks (React/Next.js), robust backend architecture (Node.js/Python), and cloud deployment on AWS.
+                        I am Redoy Kumar Das, a dedicated Software Engineer and Backend Lead with over 3 years of experience crafting high-performance, scalable web applications, specializing in PHP (Laravel) and Python (Django). My expertise lies in designing robust backend architecture, leading microservices development, and managing mission-critical systems for government and commercial clients.
                     </p>
                     <p class="leading-relaxed">
-                        I specialize in translating complex business requirements into elegant, maintainable codebases. My focus is on microservices design, leveraging CI/CD pipelines, and driving down operational latency through intelligent caching and database optimization.
+                        I focus on delivering tangible results, such as boosting system performance by 50% and driving significant increases in lead generation and operational efficiency, using a full-stack approach that prioritizes elegant, maintainable codebases.
                     </p>
                     <div class="mt-6 flex gap-4">
                         <a href="https://github.com/Redoykumar" target="_blank" class="inline-flex items-center text-lightText hover:text-accentCyan transition-colors group">
@@ -534,48 +535,48 @@
                 <!-- Skill Category 1 -->
                 <div class="glass-panel p-6 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md">
                     <div class="text-lightText mb-4 group-hover:text-accentCyan transition-colors group-hover:scale-110 transition-transform"><i data-lucide="code-2" class="w-8 h-8"></i></div>
-                    <h3 class="text-xl font-heading font-semibold mb-3 text-lightText transition-colors">Frontend</h3>
+                    <h3 class="text-xl font-heading font-semibold mb-3 text-lightText transition-colors">Frontend & Core</h3>
                     <ul class="space-y-2 text-subText text-sm">
-                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>React.js / Next.js</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>TypeScript</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Tailwind CSS</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Three.js / WebGL</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Vue.js / JavaScript</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>TypeScript / jQuery</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>JavaFX / HTML/CSS</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>C++ / C / Java</li>
                     </ul>
                 </div>
 
                 <!-- Skill Category 2 -->
                 <div class="glass-panel p-6 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md" style="transition-delay: 100ms;">
                     <div class="text-lightText mb-4 group-hover:text-accentCyan transition-colors group-hover:scale-110 transition-transform"><i data-lucide="server" class="w-8 h-8"></i></div>
-                    <h3 class="text-xl font-heading font-semibold mb-3 text-lightText transition-colors">Backend</h3>
+                    <h3 class="text-xl font-heading font-semibold mb-3 text-lightText transition-colors">Backend & Frameworks</h3>
                     <ul class="space-y-2 text-subText text-sm">
-                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Node.js / Express</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Python / Django</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>GraphQL / REST</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Microservices</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>PHP (Laravel)</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Python (Django)</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>OOP Principles</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>RESTful APIs</li>
                     </ul>
                 </div>
 
                 <!-- Skill Category 3 -->
                 <div class="glass-panel p-6 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md" style="transition-delay: 200ms;">
                     <div class="text-lightText mb-4 group-hover:text-accentCyan transition-colors group-hover:scale-110 transition-transform"><i data-lucide="database" class="w-8 h-8"></i></div>
-                    <h3 class="text-xl font-heading font-semibold mb-3 text-lightText transition-colors">Database & Cloud</h3>
+                    <h3 class="text-xl font-heading font-semibold mb-3 text-lightText transition-colors">Database & Cloud Ops</h3>
                     <ul class="space-y-2 text-subText text-sm">
-                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>PostgreSQL / MongoDB</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>AWS (EC2, S3, RDS)</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>MySQL / NoSQL</li>
                         <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Docker & Kubernetes</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Redis / Caching</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Git / Bash / CI/CD</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Cloud Computing (Concepts)</li>
                     </ul>
                 </div>
 
                 <!-- Skill Category 4 -->
                 <div class="glass-panel p-6 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md" style="transition-delay: 300ms;">
                     <div class="text-lightText mb-4 group-hover:text-accentCyan transition-colors group-hover:scale-110 transition-transform"><i data-lucide="wrench" class="w-8 h-8"></i></div>
-                    <h3 class="text-xl font-heading font-semibold mb-3 text-lightText transition-colors">Tools & Methods</h3>
+                    <h3 class="text-xl font-heading font-semibold mb-3 text-lightText transition-colors">Architecture & ML</h3>
                     <ul class="space-y-2 text-subText text-sm">
-                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Git / CI/CD Pipelines</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Agile / Scrum</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Microservices / Distributed Systems</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Machine Learning (ML)</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>NumPy / pandas</li>
                         <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>System Design</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Testing (Jest/Cypress)</li>
                     </ul>
                 </div>
             </div>
@@ -592,26 +593,24 @@
             <div class="timeline-container text-subText">
                 <div class="timeline-line md:block hidden"></div>
                 
-                <!-- Role 1 -->
-                <!-- MD Layout: Left Content, Center Dot, Right Date -->
-                <!-- SM Layout: Dot/Line on Left, Content/Date on Right -->
+                <!-- Role 1: DREAM71 BANGLADESH LTD (Jul 2023 – Present) -->
                 <div class="timeline-item reveal">
                     <div class="timeline-content timeline-left">
                         <div class="md:text-right hidden md:block">
-                            <h4 class="text-lightText font-bold">2023 - Present</h4>
-                            <p class="text-subText text-sm">Full-Time</p>
+                            <h4 class="text-lightText font-bold">Jul 2023 – Present</h4>
+                            <p class="text-subText text-sm">Dhaka, Bangladesh</p>
                         </div>
                         <div class="p-6 glass-panel rounded-xl border-l-4 border-accentCyan md:border-l-0 md:border-r-4">
-                            <h3 class="text-xl font-bold text-lightText">Senior Software Architect</h3>
-                            <h4 class="text-accentCyan font-bold mt-1">Tech Solutions Inc.</h4>
-                            <div class="md:hidden mt-2"><h4 class="text-lightText font-bold">2023 - Present</h4><p class="text-subText text-sm">Full-Time</p></div>
+                            <h3 class="text-xl font-bold text-lightText">Software Engineer (Backend Lead)</h3>
+                            <h4 class="text-accentCyan font-bold mt-1">DREAM71 BANGLADESH LTD</h4>
+                            <div class="md:hidden mt-2"><h4 class="text-lightText font-bold">Jul 2023 – Present</h4><p class="text-subText text-sm">Dhaka, Bangladesh</p></div>
                             <p class="mt-2 text-sm leading-relaxed">
-                                Leading the architectural design and implementation of highly available, event-driven microservices. Improved system latency by 40% and reduced cloud costs by 20%.
+                                Led the backend development for a critical government inland certificates project. Managed BSCCL's billing system and successfully upgraded it to V2, maintaining data integrity and accuracy.
                             </p>
                             <div class="mt-3 flex flex-wrap gap-2 md:justify-end">
-                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Node.js</span>
-                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">AWS</span>
-                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">K8s</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">PHP/Laravel</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Backend Lead</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Distributed Systems</span>
                             </div>
                         </div>
                     </div>
@@ -626,7 +625,7 @@
                     </div>
                 </div>
 
-                <!-- Role 2 -->
+                <!-- Role 2: TRENDS BIRD LIMITED - Software Engineer (Jul 2022 – Mar 2023) -->
                 <div class="timeline-item reveal">
                      <div class="timeline-content timeline-left hidden md:block">
                         <!-- Empty on desktop, content handled by timeline-right -->
@@ -636,42 +635,43 @@
                     </div>
                     <div class="timeline-content timeline-right">
                         <div class="md:text-left hidden md:block">
-                            <h4 class="text-lightText font-bold">2021 - 2023</h4>
-                            <p class="text-subText text-sm">Full-Time</p>
+                            <h4 class="text-lightText font-bold">Jul 2022 – Mar 2023</h4>
+                            <p class="text-subText text-sm">Uttara, Dhaka</p>
                         </div>
                         <div class="p-6 glass-panel rounded-xl border-l-4 border-accentCyan md:border-r-0 md:border-l-4">
-                            <h3 class="text-xl font-bold text-lightText">Full Stack Developer</h3>
-                            <h4 class="text-accentCyan font-bold mt-1">Creative Digital</h4>
-                            <div class="md:hidden mt-2"><h4 class="text-lightText font-bold">2021 - 2023</h4><p class="text-subText text-sm">Full-Time</p></div>
+                            <h3 class="text-xl font-bold text-lightText">Software Engineer</h3>
+                            <h4 class="text-accentCyan font-bold mt-1">TRENDS BIRD LIMITED</h4>
+                            <div class="md:hidden mt-2"><h4 class="text-lightText font-bold">Jul 2022 – Mar 2023</h4><p class="text-subText text-sm">Uttara, Dhaka</p></div>
                             <p class="mt-2 text-sm leading-relaxed">
-                                Developed responsive, high-traffic e-commerce platforms using the MERN stack. Led feature development from planning to production deployment.
+                                Created microservices-based flight booking software, boosting response time by 50%. Improved exam simulator stability (15% revenue increase). Designed sample management software (20% accuracy gain).
                             </p>
                             <div class="mt-3 flex flex-wrap gap-2 md:justify-start">
-                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Next.js</span>
-                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">MongoDB</span>
-                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">MERN</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Microservices</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Django</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Vue.js</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Role 3 -->
+                <!-- Role 3: TRENDS BIRD LIMITED - Associate Software Engineer (Jan 2022 – Jul 2022) -->
                  <div class="timeline-item reveal">
                     <div class="timeline-content timeline-left">
                         <div class="md:text-right hidden md:block">
-                            <h4 class="text-lightText font-bold">2020 - 2021</h4>
-                            <p class="text-subText text-sm">Internship</p>
+                            <h4 class="text-lightText font-bold">Jan 2022 – Jul 2022</h4>
+                            <p class="text-subText text-sm">Uttara, Dhaka</p>
                         </div>
                         <div class="p-6 glass-panel rounded-xl border-l-4 border-accentCyan md:border-l-0 md:border-r-4">
-                            <h3 class="text-xl font-bold text-lightText">Junior Developer Intern</h3>
-                            <h4 class="text-accentCyan font-bold mt-1">University Lab</h4>
-                            <div class="md:hidden mt-2"><h4 class="text-lightText font-bold">2020 - 2021</h4><p class="text-subText text-sm">Internship</p></div>
+                            <h3 class="text-xl font-bold text-lightText">Associate Software Engineer</h3>
+                            <h4 class="text-accentCyan font-bold mt-1">TRENDS BIRD LIMITED</h4>
+                            <div class="md:hidden mt-2"><h4 class="text-lightText font-bold">Jan 2022 – Jul 2022</h4><p class="text-subText text-sm">Uttara, Dhaka</p></div>
                             <p class="mt-2 text-sm leading-relaxed">
-                                Assisted in building a high-fidelity data visualization tool for academic research, focusing on Python scripting and optimized rendering with D3.js.
+                                Built an AI-powered Facebook marketing chatbot platform from scratch, resulting in a 50% increase in lead generation and 25% increase in customer engagement.
                             </p>
                             <div class="mt-3 flex flex-wrap gap-2 md:justify-end">
-                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Python</span>
-                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">D3.js</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">AI/ML</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Laravel</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Chatbot</span>
                             </div>
                         </div>
                     </div>
@@ -685,7 +685,35 @@
                         <!-- Empty on mobile, content handled by timeline-left -->
                     </div>
                 </div>
-
+                
+                <!-- Role 4: FIVERR.COM (Aug 2020 – Mar 2021) - Added new role here -->
+                <div class="timeline-item reveal">
+                     <div class="timeline-content timeline-left hidden md:block">
+                        <!-- Empty on desktop, content handled by timeline-right -->
+                    </div>
+                    <div class="timeline-dot">
+                        <div class="shadow-neon-sm"></div>
+                    </div>
+                    <div class="timeline-content timeline-right">
+                        <div class="md:text-left hidden md:block">
+                            <h4 class="text-lightText font-bold">Aug 2020 – Mar 2021</h4>
+                            <p class="text-subText text-sm">Online / Freelance</p>
+                        </div>
+                        <div class="p-6 glass-panel rounded-xl border-l-4 border-accentCyan md:border-r-0 md:border-l-4">
+                            <h3 class="text-xl font-bold text-lightText">Computer Science Instructor</h3>
+                            <h4 class="text-accentCyan font-bold mt-1">FIVERR.COM</h4>
+                            <div class="md:hidden mt-2"><h4 class="text-lightText font-bold">Aug 2020 – Mar 2021</h4><p class="text-subText text-sm">Online / Freelance</p></div>
+                            <p class="mt-2 text-sm leading-relaxed">
+                                Delivered 10+ projects with 100% customer satisfaction and guided 30+ international students, showcasing strong technical communication and execution skills.
+                            </p>
+                            <div class="mt-3 flex flex-wrap gap-2 md:justify-start">
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">C++</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Python</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Instruction</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </div>
@@ -699,7 +727,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 
-                <!-- Project 1 -->
+                <!-- Project 1: Government Billing System (from DREAM71) -->
                 <div class="group glass-panel rounded-xl overflow-hidden hover:shadow-neon-lg transition-all duration-300 reveal">
                     <div class="h-48 bg-primaryBg relative overflow-hidden">
                         <!-- Pseudo-image placeholder since no real images allowed -->
@@ -712,21 +740,21 @@
                         </div>
                     </div>
                     <div class="p-6 text-subText">
-                        <h3 class="text-xl font-bold mb-2 text-lightText transition-colors">Real-Time Data Stream Processor</h3>
-                        <p class="text-sm mb-4">Developed a high-throughput, fault-tolerant processing pipeline using Kafka, Node.js workers, and a Redis caching layer for near-instant data visualization.</p>
+                        <h3 class="text-xl font-bold mb-2 text-lightText transition-colors">Government e-Certificates & Billing V2</h3>
+                        <p class="text-sm mb-4">Led the backend upgrade of the BSCCL billing system (V2) and developed critical modules for government inland certificates, ensuring data accuracy and system stability.</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Kafka</span>
-                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Node.js</span>
-                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Redis</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">PHP</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Laravel</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Distributed Systems</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Project 2 -->
+                <!-- Project 2: Microservices Travel & Logistics Platform (from TRENDS BIRD SE) -->
                 <div class="group glass-panel rounded-xl overflow-hidden hover:shadow-neon-lg transition-all duration-300 reveal" style="transition-delay: 100ms;">
                     <div class="h-48 bg-primaryBg relative overflow-hidden">
                         <div class="absolute inset-0 bg-darkAccent flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-                            <i data-lucide="shopping-bag" class="w-16 h-16 text-accentCyan opacity-40 group-hover:opacity-70 transition-colors"></i>
+                            <i data-lucide="plane" class="w-16 h-16 text-accentCyan opacity-40 group-hover:opacity-70 transition-colors"></i>
                         </div>
                         <div class="absolute inset-0 bg-primaryBg opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex items-center justify-center gap-4">
                             <a href="https://github.com/Redoykumar" target="_blank" class="p-3 bg-accentCyan text-primaryBg rounded-full hover:bg-lightText hover:text-primaryBg transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
@@ -734,17 +762,17 @@
                         </div>
                     </div>
                     <div class="p-6 text-subText">
-                        <h3 class="text-xl font-bold mb-2 text-lightText transition-colors">Decentralized E-Commerce Hub</h3>
-                        <p class="text-sm mb-4">A Next.js front-end with a Python/Django microservice backend, optimized for low-latency product retrieval and a seamless checkout flow via modern APIs.</p>
+                        <h3 class="text-xl font-bold mb-2 text-lightText transition-colors">Microservices-Based Booking Engine</h3>
+                        <p class="text-sm mb-4">Engineered a modular flight booking software using Microservices architecture, leading to a 50% improvement in response time and developing related systems (exam simulator, sample management).</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Next.js</span>
-                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Django</span>
-                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">PostgreSQL</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Microservices</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Python/Django</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">RESTful APIs</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Project 3 -->
+                <!-- Project 3: AI-Driven Social Marketing Bot (from TRENDS BIRD ASE) -->
                 <div class="group glass-panel rounded-xl overflow-hidden hover:shadow-neon-lg transition-all duration-300 reveal" style="transition-delay: 200ms;">
                     <div class="h-48 bg-primaryBg relative overflow-hidden">
                         <div class="absolute inset-0 bg-darkAccent flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
@@ -756,12 +784,12 @@
                         </div>
                     </div>
                     <div class="p-6 text-subText">
-                        <h3 class="text-xl font-bold mb-2 text-lightText transition-colors">Multi-Modal AI Engine</h3>
-                        <p class="text-sm mb-4">A scalable, multi-tenant API gateway for various LLM and Vision models, secured with OAuth and deployed on a self-healing Kubernetes cluster.</p>
+                        <h3 class="text-xl font-bold mb-2 text-lightText transition-colors">AI-Powered Facebook Marketing Chatbot</h3>
+                        <p class="text-sm mb-4">Developed a full-stack, AI-powered marketing chatbot from inception, significantly increasing lead generation by 50% and customer engagement by 25% for platform users.</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Kubernetes</span>
-                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Microservices</span>
-                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">GraphQL</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">AI/ML</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Laravel</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Chatbot API</span>
                         </div>
                     </div>
                 </div>
@@ -780,26 +808,18 @@
             <div class="space-y-8 text-subText">
                 <!-- Degree 1 -->
                 <div class="glass-panel p-6 rounded-xl border-l-4 border-accentCyan reveal hover:shadow-neon-sm" style="transition-delay: 100ms;">
-                    <h3 class="text-2xl font-bold text-lightText">M.S. in Computer Science (Distributed Systems)</h3>
-                    <p class="text-accentCyan font-semibold mt-1">University of Technology</p>
-                    <p class="text-sm text-subText mt-1">2018 - 2020</p>
-                    <p class="mt-3 leading-relaxed">Thesis on serverless architecture performance optimization and cost analysis.</p>
+                    <h3 class="text-2xl font-bold text-lightText">Bachelor of Computer Science & Engineering (CSE)</h3>
+                    <p class="text-accentCyan font-semibold mt-1">SOUTHEAST UNIVERSITY, Dhaka, Bangladesh</p>
+                    <p class="text-sm text-subText mt-1">May 2019</p>
+                    <p class="mt-3 leading-relaxed">Focus on object-oriented programming, software engineering principles, and systems analysis.</p>
                 </div>
 
-                <!-- Degree 2 -->
-                <div class="glass-panel p-6 rounded-xl border-l-4 border-accentCyan reveal hover:shadow-neon-sm" style="transition-delay: 200ms;">
-                    <h3 class="text-2xl font-bold text-lightText">B.S. in Software Engineering (Design Patterns)</h3>
-                    <p class="text-accentCyan font-semibold mt-1">Metropolitan Institute</p>
-                    <p class="text-sm text-subText mt-1">2014 - 2018</p>
-                    <p class="mt-3 leading-relaxed">Focus on object-oriented programming, systems analysis, and clean architecture principles.</p>
-                </div>
-                
-                <!-- Certification Placeholder -->
+                <!-- Certification Placeholder (using a generic placeholder structure) -->
                 <div class="glass-panel p-6 rounded-xl border-l-4 border-accentCyan reveal hover:shadow-neon-sm" style="transition-delay: 300ms;">
-                    <h3 class="text-2xl font-bold text-lightText">AWS Certified Solutions Architect</h3>
-                    <p class="text-accentCyan font-semibold mt-1">Amazon Web Services</p>
+                    <h3 class="text-2xl font-bold text-lightText">Advanced Software Architecture Certification</h3>
+                    <p class="text-accentCyan font-semibold mt-1">Online Professional Development</p>
                     <p class="text-sm text-subText mt-1">2024</p>
-                    <p class="mt-3 leading-relaxed">Demonstrated expertise in designing and deploying scalable, highly available, and fault-tolerant systems on the AWS platform.</p>
+                    <p class="mt-3 leading-relaxed">Demonstrated expertise in designing and deploying scalable, highly available, and fault-tolerant systems using modern design patterns.</p>
                 </div>
             </div>
         </div>
@@ -829,6 +849,14 @@
                     <div class="flex items-center justify-center space-x-4">
                         <i data-lucide="phone" class="w-6 h-6 text-lightText group-hover:text-accentCyan transition-colors"></i>
                         <span class="text-xl font-semibold text-lightText">+8801744484183</span>
+                    </div>
+                </a>
+                
+                <!-- Location Link -->
+                <a href="https://maps.app.goo.gl/YourLocation" target="_blank" class="block glass-panel p-6 rounded-xl hover:shadow-neon-lg transition-all duration-300 group">
+                    <div class="flex items-center justify-center space-x-4">
+                        <i data-lucide="map-pin" class="w-6 h-6 text-lightText group-hover:text-accentCyan transition-colors"></i>
+                        <span class="text-xl font-semibold text-lightText">Dhaka, Bangladesh (Available Worldwide)</span>
                     </div>
                 </a>
             </div>
@@ -896,6 +924,7 @@
             lucide.createIcons(); 
             
             themeToggleBtn.title = `Toggle Theme (Current: ${mode.charAt(0).toUpperCase() + mode.slice(1)})`;
+            themeToggleBtn.setAttribute('aria-label', themeToggleBtn.title); // Update aria-label
         }
         
         // Listener for the theme button click
@@ -915,7 +944,6 @@
         });
         
         // Apply initial icon on load (must be done after DOMContentLoaded or script tag load)
-        // The IIFE handles initial theme, this ensures the icon reflects it immediately.
         updateThemeIcon(window.currentThemeMode);
 
 
@@ -927,6 +955,9 @@
         let scene, camera, renderer, particles, geometry, material;
         let mouseX = 0, mouseY = 0;
         let targetX = 0, targetY = 0;
+        let isDragging = false;
+        let lastTouchX = 0;
+        let lastTouchY = 0;
 
         const initialCameraZ = 100; 
         const maxZoomIn = 20;       
@@ -963,7 +994,7 @@
             renderer.setClearColor(0x000000, 0); 
             
             // Determine initial color based on theme
-            const initialThemeColor = document.documentElement.classList.contains('dark') ? 0x00FFFF : 0x007BFF;
+            const initialThemeColor = document.documentElement.classList.contains('dark') ? themeColors.dark.threeJsColor : themeColors.light.threeJsColor;
             
             // Particle Globe Geometry
             const particleCount = 20000;
@@ -974,7 +1005,7 @@
             const radius = 50; 
             const color = new THREE.Color(initialThemeColor); 
 
-            // FIX: Corrected loop condition from 'let i = 0 < particleCount; i++' to 'let i = 0; i < particleCount; i++'
+            // Corrected loop condition 
             for (let i = 0; i < particleCount; i++) {
                 const theta = Math.acos(THREE.MathUtils.randFloatSpread(2));
                 const phi = THREE.MathUtils.randFloat(0, 2 * Math.PI);
@@ -1007,6 +1038,11 @@
             window.addEventListener('resize', onWindowResize, false);
             document.addEventListener('mousemove', onDocumentMouseMove, false);
             document.addEventListener('wheel', onDocumentMouseWheel, false); 
+            
+            // Touch Listeners for mobile interaction
+            canvas.addEventListener('touchstart', onTouchStart, false);
+            canvas.addEventListener('touchmove', onTouchMove, false);
+            canvas.addEventListener('touchend', onTouchEnd, false);
         }
 
         function onWindowResize() {
@@ -1031,12 +1067,41 @@
             // Clamp the zoom level
             camera.position.z = Math.min(Math.max(newZ, maxZoomIn), initialCameraZ * 2); 
         }
+        
+        // Touch Handlers for 3D Camera Rotation (Mobile)
+        function onTouchStart(event) {
+            if (event.touches.length === 1) {
+                event.preventDefault();
+                isDragging = true;
+                lastTouchX = event.touches[0].pageX;
+                lastTouchY = event.touches[0].pageY;
+            }
+        }
+
+        function onTouchMove(event) {
+            if (isDragging && event.touches.length === 1) {
+                event.preventDefault();
+                const deltaX = event.touches[0].pageX - lastTouchX;
+                const deltaY = event.touches[0].pageY - lastTouchY;
+                
+                // Adjust mouseX/mouseY targets based on touch delta for rotation effect
+                mouseX += deltaX * 0.5;
+                mouseY += deltaY * 0.5;
+
+                lastTouchX = event.touches[0].pageX;
+                lastTouchY = event.touches[0].pageY;
+            }
+        }
+
+        function onTouchEnd() {
+            isDragging = false;
+        }
 
 
         function animate() {
             requestAnimationFrame(animate);
 
-            // Smoothly move the camera based on mouse input (ROTATION EFFECT)
+            // Smoothly move the camera based on mouse/touch input (ROTATION EFFECT)
             targetX = mouseX * 0.0001;
             targetY = mouseY * 0.0001;
 
@@ -1058,22 +1123,30 @@
         // General UI JS
         // ----------------------------------------------------
 
-        // Mobile Menu Toggle - FIX APPLIED HERE
+        // Navbar Shadow on Scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('glass-nav-scrolled');
+            } else {
+                navbar.classList.remove('glass-nav-scrolled');
+            }
+        });
+        
+        // Mobile Menu Toggle
         document.getElementById('mobile-menu-btn').addEventListener('click', function() {
             const menu = document.getElementById('mobile-menu');
-            const btn = this; // The button element itself
-            menu.classList.toggle('hidden');
-
+            const isMenuOpen = menu.classList.toggle('hidden');
+            
             // Logic to swap the icon (menu <-> x)
-            btn.innerHTML = ''; // Clear existing icon (SVG)
-            let iconName;
-            if (menu.classList.contains('hidden')) {
-                iconName = 'menu';
-            } else {
-                iconName = 'x';
-            }
+            this.innerHTML = ''; // Clear existing icon (SVG)
+            let iconName = isMenuOpen ? 'menu' : 'x';
+            
+            // Update aria-expanded state
+            this.setAttribute('aria-expanded', !isMenuOpen);
+
             // Insert new placeholder and re-render
-            btn.innerHTML = `<i data-lucide="${iconName}" class="w-6 h-6"></i>`;
+            this.innerHTML = `<i data-lucide="${iconName}" class="w-6 h-6"></i>`;
             lucide.createIcons();
         });
 
@@ -1081,8 +1154,11 @@
         document.querySelectorAll('#mobile-menu a').forEach(link => {
             link.addEventListener('click', () => {
                 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-                document.getElementById('mobile-menu').classList.add('hidden');
+                const menu = document.getElementById('mobile-menu');
                 
+                menu.classList.add('hidden');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+
                 // Reset the mobile menu button icon to 'menu'
                 mobileMenuBtn.innerHTML = '';
                 mobileMenuBtn.innerHTML = `<i data-lucide="menu" class="w-6 h-6"></i>`;
@@ -1111,7 +1187,10 @@
             init();
             animate();
             // Ensure the correct color is applied to Three.js after init() runs
-            window.updateThreeJsColor(document.documentElement.classList.contains('dark') ? 0x00FFFF : 0x007BFF);
+            const initialColor = document.documentElement.classList.contains('dark') 
+                                ? themeColors.dark.threeJsColor 
+                                : themeColors.light.threeJsColor;
+            window.updateThreeJsColor(initialColor);
         };
 
     </script>
