@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redoy Kumar Das | Full-Stack Software Engineer</title>
-    <meta name="description" content="Portfolio of Redoy Kumar Das, a Full-Stack Software Engineer specializing in modern web technologies.">
+    <title>HYROUND | Digital Sphere Portfolio</title>
+    <meta name="description" content="A minimalist, futuristic portfolio with a glowing digital sphere background and multi-theme support.">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Poppins:wght@300;400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,15 +21,38 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
+        // Define color palettes for both dark and light modes
+        const themeColors = {
+            dark: {
+                primaryBg: '#080A1A', 
+                secondaryBg: '#10142C',
+                accentCyan: '#00FFFF',
+                lightText: '#E0F7FA',
+                subText: '#9CA3AF',
+                darkAccent: '#1A203F',
+            },
+            light: {
+                primaryBg: '#F0F4F8', // Light Gray-Blue
+                secondaryBg: '#FFFFFF', // White
+                accentCyan: '#007BFF', // Bright Blue
+                lightText: '#1F2937', // Dark Gray
+                subText: '#6B7280', // Medium Gray
+                darkAccent: '#E5E7EB', // Very Light Gray
+            }
+        };
+
         tailwind.config = {
+            darkMode: 'class', // Enable class strategy for dark mode
             theme: {
                 extend: {
                     colors: {
-                        deepBlue: '#01010A', // Ultra Dark Navy
-                        navyBlue: '#0F0F1A', // Dark Indigo
-                        techCyan: '#00FFFF', // Electric Cyan (NEW primary color)
-                        techCyanHover: '#88FFFF',
-                        lightGray: '#E0E1DD',
+                        // Dynamically map colors based on the current mode (defaulting to dark)
+                        primaryBg: 'var(--color-primary-bg)', 
+                        secondaryBg: 'var(--color-secondary-bg)', 
+                        accentCyan: 'var(--color-accent-cyan)',
+                        lightText: 'var(--color-light-text)',
+                        subText: 'var(--color-sub-text)',
+                        darkAccent: 'var(--color-dark-accent)', 
                     },
                     fontFamily: {
                         sans: ['Roboto', 'sans-serif'],
@@ -37,51 +60,129 @@
                         hero: ['Montserrat', 'sans-serif'],
                     },
                     boxShadow: {
-                        'neon': '0 0 10px rgba(0, 255, 255, 0.4), 0 0 20px rgba(0, 255, 255, 0.2)',
-                        'neon-md': '0 0 15px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.3)',
-                        'neon-hover': '0 0 25px rgba(0, 255, 255, 0.8), 0 0 50px rgba(0, 255, 255, 0.4)',
+                        // Define shadows using CSS variables for theme switching
+                        'neon-sm': 'var(--shadow-neon-sm)',
+                        'neon-md': 'var(--shadow-neon-md)',
+                        'neon-lg': 'var(--shadow-neon-lg)',
                     }
                 }
             }
         }
+
+        // Function to apply colors to the root element
+        function applyTheme(mode) {
+            const root = document.documentElement;
+            const colors = themeColors[mode];
+            
+            // Apply background and text colors
+            root.style.setProperty('--color-primary-bg', colors.primaryBg);
+            root.style.setProperty('--color-secondary-bg', colors.secondaryBg);
+            root.style.setProperty('--color-accent-cyan', colors.accentCyan);
+            root.style.setProperty('--color-light-text', colors.lightText);
+            root.style.setProperty('--color-sub-text', colors.subText);
+            root.style.setProperty('--color-dark-accent', colors.darkAccent);
+
+            // Apply specific box shadow colors for the accent
+            const shadowColor = (mode === 'dark') ? 'rgba(0, 255, 255, 0.6)' : 'rgba(0, 123, 255, 0.6)'; // Cyan for dark, Blue for light
+            root.style.setProperty('--shadow-neon-sm', `0 0 8px ${shadowColor.replace('0.6', '0.4')}`);
+            root.style.setProperty('--shadow-neon-md', `0 0 15px ${shadowColor}, 0 0 30px ${shadowColor.replace('0.6', '0.3')}`);
+            root.style.setProperty('--shadow-neon-lg', `0 0 30px ${shadowColor.replace('0.6', '0.8')}, 0 0 60px ${shadowColor.replace('0.6', '0.4')}`);
+            
+            // Toggle the 'dark' class for standard Tailwind functionality
+            if (mode === 'dark') {
+                root.classList.add('dark');
+            } else {
+                root.classList.remove('dark');
+            }
+            
+            // Update Three.js particle color if renderer exists
+            if (window.updateThreeJsColor) {
+                const threeJsColor = (mode === 'dark') ? 0x00FFFF : 0x007BFF; // Cyan vs Blue
+                window.updateThreeJsColor(threeJsColor);
+            }
+        }
+
+        // Initial theme setup (runs before onload)
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            let initialTheme = 'dark';
+            
+            if (savedTheme === 'light' || savedTheme === 'dark') {
+                initialTheme = savedTheme;
+            } else if (savedTheme === 'system') {
+                // Check current system preference
+                initialTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            } else {
+                 // Default to dark mode if nothing is saved
+                 initialTheme = 'dark';
+            }
+            
+            // Store the mode in a global variable for theme switcher UI update
+            // We store the requested mode (dark, light, or system)
+            window.currentThemeMode = savedTheme || 'dark';
+
+            // Apply the actual visual theme
+            applyTheme(initialTheme);
+        })();
+
     </script>
 
     <style>
+        /* CSS Variables setup */
+        :root {
+            /* Fallbacks (overwritten by JS) */
+            --color-primary-bg: #080A1A; 
+            --color-secondary-bg: #10142C; 
+            --color-accent-cyan: #00FFFF;
+            --color-light-text: #E0F7FA;
+            --color-sub-text: #9CA3AF;
+            --color-dark-accent: #1A203F;
+            --shadow-neon-sm: 0 0 8px rgba(0, 255, 255, 0.4);
+            --shadow-neon-md: 0 0 15px rgba(0, 255, 255, 0.6), 0 0 30px rgba(0, 255, 255, 0.3);
+            --shadow-neon-lg: 0 0 30px rgba(0, 255, 255, 0.8), 0 0 60px rgba(0, 255, 255, 0.4);
+        }
+
         /* Custom Styles & Overrides */
         body {
-            /* Ensuring maximum dark mode contrast */
-            background-color: #01010A; 
-            color: #ffffff;
+            /* Use variable for background */
+            background-color: var(--color-primary-bg); 
+            background-image: radial-gradient(ellipse at top, var(--color-dark-accent) 0%, var(--color-primary-bg) 100%);
+            color: var(--color-light-text);
             overflow-x: hidden;
+            min-height: 100vh;
+            transition: background-color 0.5s ease;
         }
 
         /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #01010A; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #0F0F1A; 
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-secondary-bg); }
+        ::-webkit-scrollbar-thumb { 
+            background: var(--color-accent-cyan); 
             border-radius: 4px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #00FFFF; /* NEW Color */
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-accent-cyan); filter: brightness(1.2); }
+
+        /* Glassmorphism Utilities - Refined */
+        .glass-panel {
+            background: color-mix(in srgb, var(--color-secondary-bg) 75%, transparent); 
+            backdrop-filter: blur(15px); /* Increased blur */
+            -webkit-backdrop-filter: blur(15px);
+            /* Slightly thicker, more defined border */
+            border: 2px solid color-mix(in srgb, var(--color-accent-cyan) 25%, transparent); 
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), var(--shadow-neon-sm); /* Added subtle neon glow to base shadow */
+            transition: background 0.5s, border 0.5s, box-shadow 0.3s;
+        }
+        .glass-panel:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7), var(--shadow-neon-md); /* Enhanced neon on hover */
         }
 
-        /* Glassmorphism Utilities - Darker and uses new border color */
-        .glass-panel {
-            background: rgba(15, 15, 26, 0.7); /* navyBlue with opacity */
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 255, 255, 0.15); /* NEW Color */
-        }
 
         .glass-nav {
-            background: rgba(1, 1, 10, 0.85); /* deepBlue with opacity */
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0, 255, 255, 0.1); /* NEW Color */
+            background: color-mix(in srgb, var(--color-primary-bg) 95%, transparent); 
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--color-dark-accent);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+            transition: background 0.5s, border 0.5s;
         }
 
         /* Animation Classes */
@@ -95,91 +196,135 @@
             transform: translateY(0);
         }
 
-        /* Experience Timeline Style - STICKY FOR LARGE SCREENS */
+        /* Experience Timeline Style - Simplified for better responsiveness */
         .timeline-container {
+            display: grid;
+            grid-template-columns: 1fr 20px 1fr;
+            gap: 0 10px;
             position: relative;
-            max-width: 48rem; /* 4xl */
-            margin: 0 auto;
         }
 
         .timeline-line {
             position: absolute;
             left: 50%;
-            width: 4px;
-            background-color: #0F0F1A; /* Dark Indigo */
-            top: 0;
-            bottom: 0;
+            width: 2px;
+            height: 100%;
             transform: translateX(-50%);
+            background-color: var(--color-dark-accent);
         }
 
         .timeline-item {
-            display: grid;
-            grid-template-columns: 1fr 40px 1fr; /* Left content, separator, right content */
-            gap: 2rem;
-            margin-bottom: 3rem;
+            display: contents; /* Allows child elements to span columns */
         }
 
         .timeline-dot {
-            position: relative;
+            grid-column: 2 / 3;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 10;
+            padding: 20px 0; /* Add vertical spacing */
         }
 
         .timeline-content {
-            padding: 1rem;
-            border-radius: 0.75rem;
-            margin: 0;
+            padding: 20px;
         }
 
-        .timeline-left .timeline-content {
+        .timeline-left {
+            grid-column: 1 / 2;
             text-align: right;
-            border-right: 4px solid #00FFFF; /* NEW Color */
-            margin-right: -1rem;
-        }
-        .timeline-right .timeline-content {
-            text-align: left;
-            border-left: 4px solid #00FFFF; /* NEW Color */
-            margin-left: -1rem;
         }
 
-        /* Mobile adjustments (Single column) */
+        .timeline-right {
+            grid-column: 3 / 4;
+            text-align: left;
+        }
+
+        .timeline-dot div { 
+            background: var(--color-secondary-bg); 
+            border-color: var(--color-accent-cyan); 
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 3px solid var(--color-accent-cyan);
+            z-index: 10;
+        }
+
+        /* Mobile adjustments for timeline (Single Column) */
         @media (max-width: 767px) {
-            .timeline-item {
-                grid-template-columns: 1fr;
-                gap: 0;
+            .timeline-container {
+                grid-template-columns: 20px 1fr; /* Dot column on left, content on right */
+                gap: 0 15px;
             }
             .timeline-line {
-                left: 2rem;
+                left: 10px; /* Move line to the left edge of the dot column */
+                transform: translateX(0);
             }
+
+            .timeline-item > * {
+                grid-column: auto; /* Reset grid column for mobile */
+                text-align: left !important;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
             .timeline-dot {
-                justify-content: flex-start;
-                margin-left: 2rem;
-                transform: translateX(-50%);
+                grid-column: 1 / 2;
+                padding: 15px 0;
             }
-            .timeline-left .timeline-content,
-            .timeline-right .timeline-content {
-                text-align: left;
-                margin-left: 2rem;
-                border-left: 4px solid #00FFFF; /* NEW Color */
-                border-right: none;
-                margin-right: 0;
+
+            .timeline-content.timeline-left,
+            .timeline-content.timeline-right {
+                grid-column: 2 / 3;
             }
-            .timeline-left .timeline-content {
-                margin-left: 2.25rem;
+
+            /* Apply border styles consistently for mobile */
+            .timeline-item > div:not(.timeline-dot) > div {
+                 border-left: 4px solid var(--color-accent-cyan); 
+                 border-right: none !important;
+            }
+
+            .timeline-item > div:not(.timeline-dot) {
+                 padding-left: 10px; /* Shift content slightly */
             }
         }
-
+        
+        /* Three.js Canvas and Text Overlay */
         #bg-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
-            opacity: 1; 
+            z-index: 0; 
+            opacity: 0.8; 
+            transition: opacity 0.5s;
         }
+
+        /* Geometric Birds SVG styling */
+        #geometric-birds {
+            position: absolute;
+            top: 5rem;
+            left: 5rem;
+            width: 150px;
+            height: 100px;
+            opacity: 0.6;
+            transition: fill 0.5s, stroke 0.5s;
+        }
+        #geometric-birds polygon {
+            fill: var(--color-light-text);
+            stroke: var(--color-accent-cyan);
+            transition: fill 0.5s, stroke 0.5s;
+        }
+
+        @media (max-width: 768px) {
+            #geometric-birds {
+                left: 1rem;
+                top: 6rem;
+                width: 100px;
+                height: 60px;
+            }
+        }
+
     </style>
 </head>
 <body class="relative">
@@ -187,31 +332,76 @@
     <!-- 3D Background Canvas -->
     <canvas id="bg-canvas"></canvas>
 
+    <!-- Hero Overlay for Text (HYROUND) and Birds (Z-index 10) -->
+    <div id="hero-overlay" class="pointer-events-none">
+        
+        <!-- HYROUND Title positioned over the 3D Sphere -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <h1 class="text-7xl md:text-9xl font-hero font-extrabold text-primaryBg opacity-70 tracking-widest uppercase" 
+                style="pointer-events: none; text-shadow: 0 0 15px rgba(0, 0, 0, 0.9);">
+                H Y R O U N D
+            </h1>
+        </div>
+
+        <!-- Stylized Geometric Birds SVG -->
+        <svg id="geometric-birds" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="transition-transform hover:scale-110 duration-500">
+            <!-- Bird 1 -->
+            <polygon points="0,30 20,10 40,30 20,40" stroke-width="0.5" class="transition-transform duration-1000" style="transform: translate(0px, 0px); opacity: 1;">
+                <animate attributeName="transform" type="translate" from="0 0" to="10 0" dur="5s" repeatCount="indefinite" additive="sum"/>
+            </polygon>
+            <!-- Bird 2 -->
+            <polygon points="30,40 50,20 70,40 50,50" stroke-width="0.5" class="transition-transform duration-1000" style="transform: translate(0px, 0px); opacity: 0.8;">
+                <animate attributeName="transform" type="translate" from="0 0" to="5 0" dur="4s" repeatCount="indefinite" additive="sum"/>
+            </polygon>
+            <!-- Bird 3 -->
+            <polygon points="60,20 75,5 90,20 75,25" stroke-width="0.5" class="transition-transform duration-1000" style="transform: translate(0px, 0px); opacity: 0.9;">
+                <animate attributeName="transform" type="translate" from="0 0" to="15 0" dur="6s" repeatCount="indefinite" additive="sum"/>
+            </polygon>
+        </svg>
+
+    </div>
+
+
     <!-- Navigation -->
     <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <div class="flex-shrink-0 cursor-pointer" onclick="window.scrollTo(0,0)">
-                    <span class="font-heading font-bold text-2xl text-white tracking-wider">
-                        RK<span class="text-techCyan">D</span>
+                    <span class="font-heading font-bold text-2xl tracking-wider text-lightText">
+                        RK<span class="text-accentCyan">D</span>
                     </span>
                 </div>
                 
-                <!-- Desktop Menu -->
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-8">
-                        <a href="#about" class="hover:text-techCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
-                        <a href="#skills" class="hover:text-techCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">Skills</a>
-                        <a href="#experience" class="hover:text-techCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">Experience</a>
-                        <a href="#projects" class="hover:text-techCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">Projects</a>
-                        <a href="#education" class="hover:text-techCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">Education</a>
-                        <a href="#contact" class="text-techCyan border border-techCyan hover:bg-techCyan hover:text-deepBlue px-4 py-2 rounded-md text-sm font-medium transition-all shadow-neon hover:shadow-neon-hover">Contact Me</a>
+                <div class="flex items-center">
+                    <!-- Desktop Menu -->
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-8">
+                            <a href="#about" class="text-lightText hover:text-accentCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
+                            <a href="#services" class="text-lightText hover:text-accentCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</a>
+                            <a href="#skills" class="text-lightText hover:text-accentCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">Skills</a>
+                            <a href="#experience" class="text-lightText hover:text-accentCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">Experience</a>
+                            <a href="#projects" class="text-lightText hover:text-accentCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">Projects</a>
+                            <a href="#education" class="text-lightText hover:text-accentCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">Education</a>
+                        </div>
+                    </div>
+
+                    <!-- Theme Switcher -->
+                    <div class="ml-4 flex items-center">
+                        <button id="theme-toggle-btn" class="p-2 rounded-full text-lightText bg-secondaryBg hover:text-accentCyan transition-all duration-300 hover:shadow-neon-sm" title="Toggle Theme (Dark, Light, System)">
+                            <!-- The icon content will be set by JavaScript -->
+                            <i data-lucide="sun-moon" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+
+                    <!-- Contact Button (Desktop) -->
+                    <div class="hidden md:block ml-4">
+                        <a href="#contact" class="text-lightText border border-lightText hover:bg-lightText hover:text-primaryBg px-4 py-2 rounded-md text-sm font-medium transition-all hover:shadow-neon-sm">Contact Me</a>
                     </div>
                 </div>
 
                 <!-- Mobile menu button -->
                 <div class="-mr-2 flex md:hidden">
-                    <button type="button" id="mobile-menu-btn" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-navyBlue focus:outline-none">
+                    <button type="button" id="mobile-menu-btn" class="inline-flex items-center justify-center p-2 rounded-md text-lightText hover:text-primaryBg hover:bg-lightText focus:outline-none transition-colors">
                         <i data-lucide="menu" class="w-6 h-6"></i>
                     </button>
                 </div>
@@ -219,45 +409,45 @@
         </div>
 
         <!-- Mobile Menu Panel -->
-        <div class="md:hidden hidden bg-deepBlue border-b border-gray-800" id="mobile-menu">
+        <div class="md:hidden hidden bg-primaryBg border-b border-darkAccent" id="mobile-menu">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#about" class="text-gray-300 hover:text-techCyan block px-3 py-2 rounded-md text-base font-medium">About</a>
-                <a href="#skills" class="text-gray-300 hover:text-techCyan block px-3 py-2 rounded-md text-base font-medium">Skills</a>
-                <a href="#experience" class="text-gray-300 hover:text-techCyan block px-3 py-2 rounded-md text-base font-medium">Experience</a>
-                <a href="#projects" class="text-gray-300 hover:text-techCyan block px-3 py-2 rounded-md text-base font-medium">Projects</a>
-                <a href="#education" class="text-gray-300 hover:text-techCyan block px-3 py-2 rounded-md text-base font-medium">Education</a>
-                <a href="#contact" class="text-techCyan block px-3 py-2 rounded-md text-base font-medium">Contact</a>
+                <a href="#about" class="text-lightText hover:text-accentCyan block px-3 py-2 rounded-md text-base font-medium">About</a>
+                <a href="#services" class="text-lightText hover:text-accentCyan block px-3 py-2 rounded-md text-base font-medium">Services</a>
+                <a href="#skills" class="text-lightText hover:text-accentCyan block px-3 py-2 rounded-md text-base font-medium">Skills</a>
+                <a href="#experience" class="text-lightText hover:text-accentCyan block px-3 py-2 rounded-md text-base font-medium">Experience</a>
+                <a href="#projects" class="text-lightText hover:text-accentCyan block px-3 py-2 rounded-md text-base font-medium">Projects</a>
+                <a href="#education" class="text-lightText hover:text-accentCyan block px-3 py-2 rounded-md text-base font-medium">Education</a>
+                <a href="#contact" class="text-lightText block px-3 py-2 rounded-md text-base font-medium">Contact</a>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="min-h-screen flex items-center justify-center relative px-4 pt-20" id="home">
-        <div class="text-center max-w-4xl z-10">
-            <p class="text-techCyan font-mono mb-4 reveal tracking-widest uppercase text-sm">Hello, I am</p>
-            <h1 class="text-5xl md:text-7xl font-hero font-bold text-white mb-6 tracking-tight reveal" style="transition-delay: 100ms;">
-                Redoy Kumar <span class="text-transparent bg-clip-text bg-gradient-to-r from-techCyan to-cyan-400">Das</span>
+        <div class="text-center max-w-4xl z-10 pointer-events-auto">
+            <p class="text-subText font-mono mb-4 reveal tracking-widest uppercase text-sm">Welcome to the Digital Sphere</p>
+            <h1 class="text-5xl md:text-7xl font-hero font-bold text-lightText mb-6 tracking-tight reveal" style="transition-delay: 100ms;">
+                Redoy Kumar <span class="text-transparent bg-clip-text bg-gradient-to-r from-accentCyan to-lightText">Das</span>
             </h1>
-            <h2 class="text-2xl md:text-3xl font-heading text-gray-300 mb-8 reveal" style="transition-delay: 200ms;">
-                Full-Stack Software Architect & Engineer
+            <h2 class="text-2xl md:text-4xl font-heading text-accentCyan mb-8 reveal font-semibold" style="transition-delay: 200ms;">
+                <span class="text-lightText"></span> Full-Stack Software Architect <span class="text-lightText"></span>
             </h2>
-            <p class="text-gray-400 max-w-2xl mx-auto mb-10 text-lg leading-relaxed reveal" style="transition-delay: 300ms;">
-                Building in the void. Architecting robust, scalable web solutions with a focus on dark-mode aesthetics and high-performance system design.
+            <p class="max-w-2xl mx-auto mb-10 text-lg leading-relaxed reveal text-subText" style="transition-delay: 300ms;">
+                Building robust, scalable web solutions with minimalist aesthetics and a focus on high-performance system design and cloud infrastructure.
             </p>
             
             <div class="flex flex-col sm:flex-row justify-center gap-4 reveal" style="transition-delay: 400ms;">
-                <a href="#projects" class="group relative px-8 py-3 bg-transparent border border-techCyan text-techCyan font-semibold rounded overflow-hidden transition-all duration-300 hover:shadow-neon hover:text-deepBlue">
-                    <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-techCyan rounded-full group-hover:w-56 group-hover:h-56 opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -z-10"></span>
-                    <span class="relative z-10">View Work</span>
+                <a href="#projects" class="group relative px-8 py-3 bg-accentCyan border border-accentCyan text-primaryBg font-semibold rounded overflow-hidden transition-all duration-300 hover:shadow-neon-md">
+                    <span class="relative z-10">View Architectures</span>
                 </a>
-                <a href="#contact" class="px-8 py-3 bg-navyBlue text-white font-semibold rounded hover:bg-indigo-900 transition-colors border border-zinc-800 hover:border-zinc-600">
-                    Contact Me
+                <a href="#contact" class="px-8 py-3 glass-panel text-lightText font-semibold rounded transition-colors border-none hover:shadow-neon-sm">
+                    Initiate Contact
                 </a>
             </div>
         </div>
         
         <!-- Scroll Down Indicator -->
-        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-techCyan">
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-accentCyan z-10">
             <i data-lucide="chevron-down" class="w-8 h-8"></i>
         </div>
     </section>
@@ -265,28 +455,28 @@
     <!-- About Section -->
     <section id="about" class="py-20 px-4 relative z-10">
         <div class="max-w-6xl mx-auto">
-            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-16 text-center reveal">
-                <span class="border-b-4 border-techCyan pb-2">About Me</span>
+            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-16 text-center reveal text-lightText">
+                <span class="border-b-4 border-accentCyan pb-2">About The Architect</span>
             </h2>
             <div class="md:flex md:space-x-12 items-center">
                 <div class="md:w-1/3 mb-8 md:mb-0 reveal" style="transition-delay: 100ms;">
-                     <!-- Placeholder image for professional photo -->
-                    <div class="w-64 h-64 mx-auto bg-navyBlue rounded-full border-4 border-techCyan shadow-neon-md flex items-center justify-center text-4xl text-techCyan">
-                        <i data-lucide="user" class="w-24 h-24"></i>
+                    <!-- Placeholder image for professional photo -->
+                    <div class="w-64 h-64 mx-auto bg-secondaryBg rounded-full border-4 border-accentCyan shadow-neon-md flex items-center justify-center text-4xl text-lightText">
+                        <i data-lucide="user" class="w-24 h-24 text-accentCyan"></i>
                     </div>
                 </div>
-                <div class="md:w-2/3 reveal" style="transition-delay: 200ms;">
-                    <p class="text-gray-300 text-lg leading-relaxed mb-4">
-                        I am Redoy Kumar Das, a dedicated Full-Stack Software Engineer with over 4 years of experience crafting high-performance, scalable web applications. My expertise spans across modern JavaScript frameworks, robust backend architecture, and cloud deployment on AWS.
+                <div class="md:w-2/3 reveal text-subText" style="transition-delay: 200ms;">
+                    <p class="text-lg leading-relaxed mb-4">
+                        I am Redoy Kumar Das, a dedicated Full-Stack Software Architect with over 4 years of experience crafting high-performance, scalable web applications. My expertise spans across modern JavaScript frameworks (React/Next.js), robust backend architecture (Node.js/Python), and cloud deployment on AWS.
                     </p>
-                    <p class="text-gray-400 leading-relaxed">
-                        I thrive on solving complex technical challenges, focusing on clean code, optimal database design, and creating seamless user experiences. I am passionate about microservices and leveraging new technologies to drive innovation.
+                    <p class="leading-relaxed">
+                        I specialize in translating complex business requirements into elegant, maintainable codebases. My focus is on microservices design, leveraging CI/CD pipelines, and driving down operational latency through intelligent caching and database optimization.
                     </p>
                     <div class="mt-6 flex gap-4">
-                        <a href="https://github.com/Redoykumar" target="_blank" class="inline-flex items-center text-techCyan hover:text-white transition-colors group">
+                        <a href="https://github.com/Redoykumar" target="_blank" class="inline-flex items-center text-lightText hover:text-accentCyan transition-colors group">
                             <i data-lucide="github" class="w-6 h-6 mr-2"></i> GitHub Profile
                         </a>
-                        <a href="https://www.linkedin.com/in/redoy-kumar-das" target="_blank" class="inline-flex items-center text-techCyan hover:text-white transition-colors group">
+                        <a href="https://www.linkedin.com/in/redoy-kumar-das" target="_blank" class="inline-flex items-center text-lightText hover:text-accentCyan transition-colors group">
                              <i data-lucide="linkedin" class="w-6 h-6 mr-2"></i> LinkedIn Profile
                         </a>
                     </div>
@@ -294,60 +484,93 @@
             </div>
         </div>
     </section>
+    
+    <!-- New Services Section -->
+    <section id="services" class="py-20 px-4 relative z-10 bg-secondaryBg">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-4 text-center reveal text-lightText">Core <span class="text-accentCyan">Offerings</span></h2>
+            <p class="text-center text-subText mb-16 max-w-2xl mx-auto reveal" style="transition-delay: 100ms;">Architecting solutions from concept to deployment.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Service 1: Cloud Architecture -->
+                <div class="glass-panel p-8 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md">
+                    <div class="text-accentCyan mb-4 group-hover:scale-110 transition-transform"><i data-lucide="cloud-cog" class="w-10 h-10"></i></div>
+                    <h3 class="text-2xl font-heading font-semibold mb-3 text-lightText transition-colors">Cloud & DevOps</h3>
+                    <p class="text-subText text-md">Designing resilient, cost-effective infrastructure on AWS, utilizing Terraform, Docker, and Kubernetes for seamless scaling and deployment.</p>
+                </div>
+
+                <!-- Service 2: Full-Stack Development -->
+                <div class="glass-panel p-8 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md" style="transition-delay: 100ms;">
+                    <div class="text-accentCyan mb-4 group-hover:scale-110 transition-transform"><i data-lucide="layout-grid" class="w-10 h-10"></i></div>
+                    <h3 class="text-2xl font-heading font-semibold mb-3 text-lightText transition-colors">End-to-End Systems</h3>
+                    <p class="text-subText text-md">Building high-speed, dynamic web applications with Next.js/React on the frontend and scalable Node.js/Python microservices on the backend.</p>
+                </div>
+
+                <!-- Service 3: Performance Optimization -->
+                <div class="glass-panel p-8 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md" style="transition-delay: 200ms;">
+                    <div class="text-accentCyan mb-4 group-hover:scale-110 transition-transform"><i data-lucide="zap" class="w-10 h-10"></i></div>
+                    <h3 class="text-2xl font-heading font-semibold mb-3 text-lightText transition-colors">System Optimization</h3>
+                    <p class="text-subText text-md">Deep dive performance audits, focusing on database query tuning, memory management, and implementing advanced caching layers (Redis).</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
 
     <!-- Skills Section -->
     <section id="skills" class="py-20 px-4 relative z-10">
         <div class="max-w-6xl mx-auto">
-            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-16 text-center reveal">
-                <span class="border-b-4 border-techCyan pb-2">Technical Arsenal</span>
+            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-16 text-center reveal text-lightText">
+                <span class="border-b-4 border-accentCyan pb-2">Technical Arsenal</span>
             </h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Skill Category 1 -->
                 <div class="glass-panel p-6 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md">
-                    <div class="text-techCyan mb-4 group-hover:scale-110 transition-transform"><i data-lucide="code-2" class="w-8 h-8"></i></div>
-                    <h3 class="text-xl font-heading font-semibold mb-3 group-hover:text-techCyan transition-colors">Frontend</h3>
-                    <ul class="space-y-2 text-gray-300 text-sm">
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>React.js / Next.js</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>TypeScript</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Tailwind CSS</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Three.js / WebGL</li>
+                    <div class="text-lightText mb-4 group-hover:text-accentCyan transition-colors group-hover:scale-110 transition-transform"><i data-lucide="code-2" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-heading font-semibold mb-3 text-lightText transition-colors">Frontend</h3>
+                    <ul class="space-y-2 text-subText text-sm">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>React.js / Next.js</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>TypeScript</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Tailwind CSS</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Three.js / WebGL</li>
                     </ul>
                 </div>
 
                 <!-- Skill Category 2 -->
                 <div class="glass-panel p-6 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md" style="transition-delay: 100ms;">
-                    <div class="text-techCyan mb-4 group-hover:scale-110 transition-transform"><i data-lucide="server" class="w-8 h-8"></i></div>
-                    <h3 class="text-xl font-heading font-semibold mb-3 group-hover:text-techCyan transition-colors">Backend</h3>
-                    <ul class="space-y-2 text-gray-300 text-sm">
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Node.js / Express</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Python / Django</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>GraphQL</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Microservices</li>
+                    <div class="text-lightText mb-4 group-hover:text-accentCyan transition-colors group-hover:scale-110 transition-transform"><i data-lucide="server" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-heading font-semibold mb-3 text-lightText transition-colors">Backend</h3>
+                    <ul class="space-y-2 text-subText text-sm">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Node.js / Express</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Python / Django</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>GraphQL / REST</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Microservices</li>
                     </ul>
                 </div>
 
                 <!-- Skill Category 3 -->
                 <div class="glass-panel p-6 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md" style="transition-delay: 200ms;">
-                    <div class="text-techCyan mb-4 group-hover:scale-110 transition-transform"><i data-lucide="database" class="w-8 h-8"></i></div>
-                    <h3 class="text-xl font-heading font-semibold mb-3 group-hover:text-techCyan transition-colors">Database & Cloud</h3>
-                    <ul class="space-y-2 text-gray-300 text-sm">
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>PostgreSQL / MongoDB</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>AWS (EC2, S3)</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Docker & Kubernetes</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Redis</li>
+                    <div class="text-lightText mb-4 group-hover:text-accentCyan transition-colors group-hover:scale-110 transition-transform"><i data-lucide="database" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-heading font-semibold mb-3 text-lightText transition-colors">Database & Cloud</h3>
+                    <ul class="space-y-2 text-subText text-sm">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>PostgreSQL / MongoDB</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>AWS (EC2, S3, RDS)</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Docker & Kubernetes</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Redis / Caching</li>
                     </ul>
                 </div>
 
                 <!-- Skill Category 4 -->
                 <div class="glass-panel p-6 rounded-xl hover:transform hover:-translate-y-2 transition-all duration-300 reveal group hover:shadow-neon-md" style="transition-delay: 300ms;">
-                    <div class="text-techCyan mb-4 group-hover:scale-110 transition-transform"><i data-lucide="wrench" class="w-8 h-8"></i></div>
-                    <h3 class="text-xl font-heading font-semibold mb-3 group-hover:text-techCyan transition-colors">Tools & Methods</h3>
-                    <ul class="space-y-2 text-gray-300 text-sm">
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Git / CI/CD</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Agile / Scrum</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>System Architecture</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-techCyan rounded-full mr-2 shadow-[0_0_5px_#00FFFF]"></span>Testing (Jest/Cypress)</li>
+                    <div class="text-lightText mb-4 group-hover:text-accentCyan transition-colors group-hover:scale-110 transition-transform"><i data-lucide="wrench" class="w-8 h-8"></i></div>
+                    <h3 class="text-xl font-heading font-semibold mb-3 text-lightText transition-colors">Tools & Methods</h3>
+                    <ul class="space-y-2 text-subText text-sm">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Git / CI/CD Pipelines</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Agile / Scrum</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>System Design</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-accentCyan rounded-full mr-2 shadow-neon-sm"></span>Testing (Jest/Cypress)</li>
                     </ul>
                 </div>
             </div>
@@ -355,90 +578,106 @@
     </section>
 
     <!-- Experience Section -->
-    <section id="experience" class="py-20 px-4 z-10 relative">
+    <section id="experience" class="py-20 px-4 z-10 relative bg-secondaryBg">
         <div class="max-w-4xl mx-auto">
-            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-16 text-center reveal">
-                Professional <span class="text-techCyan">Timeline</span>
+            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-16 text-center reveal text-lightText">
+                Professional <span class="text-accentCyan">Timeline</span>
             </h2>
             
-            <div class="timeline-container">
-                <div class="timeline-line hidden md:block"></div>
+            <div class="timeline-container text-subText">
+                <div class="timeline-line md:block hidden"></div>
                 
                 <!-- Role 1 -->
+                <!-- MD Layout: Left Content, Center Dot, Right Date -->
+                <!-- SM Layout: Dot/Line on Left, Content/Date on Right -->
                 <div class="timeline-item reveal">
-                    <div class="timeline-content timeline-left md:col-span-1">
-                        <div class="p-6 glass-panel rounded-lg border-l-4 border-techCyan md:border-l-0 md:border-r-4">
-                            <h3 class="text-xl font-bold text-white">Senior Software Engineer</h3>
-                            <h4 class="text-techCyan font-bold mt-1">Tech Solutions Inc.</h4>
-                            <p class="mt-2 text-gray-300 text-sm leading-relaxed">
-                                Leading a team of 5 developers in re-architecting legacy monoliths into microservices. Improved system latency by 40% using Node.js and Redis caching strategies.
+                    <div class="timeline-content timeline-left">
+                        <div class="md:text-right hidden md:block">
+                            <h4 class="text-lightText font-bold">2023 - Present</h4>
+                            <p class="text-subText text-sm">Full-Time</p>
+                        </div>
+                        <div class="p-6 glass-panel rounded-xl border-l-4 border-accentCyan md:border-l-0 md:border-r-4">
+                            <h3 class="text-xl font-bold text-lightText">Senior Software Architect</h3>
+                            <h4 class="text-accentCyan font-bold mt-1">Tech Solutions Inc.</h4>
+                            <div class="md:hidden mt-2"><h4 class="text-lightText font-bold">2023 - Present</h4><p class="text-subText text-sm">Full-Time</p></div>
+                            <p class="mt-2 text-sm leading-relaxed">
+                                Leading the architectural design and implementation of highly available, event-driven microservices. Improved system latency by 40% and reduced cloud costs by 20%.
                             </p>
                             <div class="mt-3 flex flex-wrap gap-2 md:justify-end">
-                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">Node.js</span>
-                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">AWS</span>
-                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">React</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Node.js</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">AWS</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">K8s</span>
                             </div>
                         </div>
                     </div>
                     <div class="timeline-dot">
-                        <div class="w-4 h-4 rounded-full border-2 border-techCyan bg-deepBlue z-10 shadow-[0_0_10px_#00FFFF]"></div>
+                        <div class="shadow-neon-sm"></div>
                     </div>
-                    <div class="timeline-content timeline-right md:col-span-1">
-                        <h4 class="text-techCyan font-bold md:text-left">2023 - Present</h4>
-                        <p class="text-gray-400 text-sm hidden md:block">Full-Time</p>
+                    <div class="timeline-content timeline-right hidden md:block">
+                        <!-- Date content is on the left for desktop, so this side is empty for balance -->
+                    </div>
+                    <div class="timeline-content timeline-right md:hidden">
+                        <!-- Empty on mobile, content handled by timeline-left -->
                     </div>
                 </div>
 
                 <!-- Role 2 -->
                 <div class="timeline-item reveal">
-                    <div class="timeline-content timeline-left md:col-span-1 md:hidden">
-                        <h4 class="text-techCyan font-bold">2021 - 2023</h4>
-                        <p class="text-gray-400 text-sm">Full-Time</p>
-                    </div>
-                    <div class="timeline-content timeline-right md:col-span-1">
-                        <div class="p-6 glass-panel rounded-lg border-l-4 border-techCyan md:border-r-0 md:border-l-4">
-                            <h3 class="text-xl font-bold text-white">Full Stack Developer</h3>
-                            <h4 class="text-techCyan font-bold mt-1">Creative Digital</h4>
-                            <p class="mt-2 text-gray-300 text-sm leading-relaxed">
-                                Developed responsive e-commerce platforms using the MERN stack. Integrated payment gateways (Stripe/PayPal) and optimized frontend performance.
-                            </p>
-                            <div class="mt-3 flex flex-wrap gap-2 md:justify-start">
-                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">MongoDB</span>
-                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">Express</span>
-                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">React</span>
-                            </div>
-                        </div>
+                     <div class="timeline-content timeline-left hidden md:block">
+                        <!-- Empty on desktop, content handled by timeline-right -->
                     </div>
                     <div class="timeline-dot">
-                        <div class="w-4 h-4 rounded-full border-2 border-techCyan bg-deepBlue z-10 shadow-[0_0_10px_#00FFFF]"></div>
+                        <div class="shadow-neon-sm"></div>
                     </div>
-                    <div class="timeline-content timeline-left md:col-span-1 md:block hidden">
-                        <h4 class="text-techCyan font-bold md:text-right">2021 - 2023</h4>
-                        <p class="text-gray-400 text-sm md:text-right">Full-Time</p>
+                    <div class="timeline-content timeline-right">
+                        <div class="md:text-left hidden md:block">
+                            <h4 class="text-lightText font-bold">2021 - 2023</h4>
+                            <p class="text-subText text-sm">Full-Time</p>
+                        </div>
+                        <div class="p-6 glass-panel rounded-xl border-l-4 border-accentCyan md:border-r-0 md:border-l-4">
+                            <h3 class="text-xl font-bold text-lightText">Full Stack Developer</h3>
+                            <h4 class="text-accentCyan font-bold mt-1">Creative Digital</h4>
+                            <div class="md:hidden mt-2"><h4 class="text-lightText font-bold">2021 - 2023</h4><p class="text-subText text-sm">Full-Time</p></div>
+                            <p class="mt-2 text-sm leading-relaxed">
+                                Developed responsive, high-traffic e-commerce platforms using the MERN stack. Led feature development from planning to production deployment.
+                            </p>
+                            <div class="mt-3 flex flex-wrap gap-2 md:justify-start">
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Next.js</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">MongoDB</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">MERN</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Role 3 (New Placeholder Role) -->
+                <!-- Role 3 -->
                  <div class="timeline-item reveal">
-                    <div class="timeline-content timeline-left md:col-span-1">
-                        <div class="p-6 glass-panel rounded-lg border-l-4 border-techCyan md:border-l-0 md:border-r-4">
-                            <h3 class="text-xl font-bold text-white">Junior Developer Intern</h3>
-                            <h4 class="text-techCyan font-bold mt-1">University Lab</h4>
-                            <p class="mt-2 text-gray-300 text-sm leading-relaxed">
-                                Assisted in building a data simulation tool for academic research, focusing on Python scripting and data visualization.
+                    <div class="timeline-content timeline-left">
+                        <div class="md:text-right hidden md:block">
+                            <h4 class="text-lightText font-bold">2020 - 2021</h4>
+                            <p class="text-subText text-sm">Internship</p>
+                        </div>
+                        <div class="p-6 glass-panel rounded-xl border-l-4 border-accentCyan md:border-l-0 md:border-r-4">
+                            <h3 class="text-xl font-bold text-lightText">Junior Developer Intern</h3>
+                            <h4 class="text-accentCyan font-bold mt-1">University Lab</h4>
+                            <div class="md:hidden mt-2"><h4 class="text-lightText font-bold">2020 - 2021</h4><p class="text-subText text-sm">Internship</p></div>
+                            <p class="mt-2 text-sm leading-relaxed">
+                                Assisted in building a high-fidelity data visualization tool for academic research, focusing on Python scripting and optimized rendering with D3.js.
                             </p>
                             <div class="mt-3 flex flex-wrap gap-2 md:justify-end">
-                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">Python</span>
-                                <span class="px-2 py-1 bg-navyBlue border border-zinc-800 text-xs rounded text-techCyan">Pandas</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">Python</span>
+                                <span class="px-2 py-1 bg-darkAccent border border-secondaryBg text-xs rounded text-lightText">D3.js</span>
                             </div>
                         </div>
                     </div>
                     <div class="timeline-dot">
-                        <div class="w-4 h-4 rounded-full border-2 border-techCyan bg-deepBlue z-10 shadow-[0_0_10px_#00FFFF]"></div>
+                        <div class="shadow-neon-sm"></div>
                     </div>
-                    <div class="timeline-content timeline-right md:col-span-1">
-                        <h4 class="text-techCyan font-bold md:text-left">2020 - 2021</h4>
-                        <p class="text-gray-400 text-sm hidden md:block">Internship</p>
+                    <div class="timeline-content timeline-right hidden md:block">
+                        <!-- Date content is on the left for desktop, so this side is empty for balance -->
+                    </div>
+                    <div class="timeline-content timeline-right md:hidden">
+                        <!-- Empty on mobile, content handled by timeline-left -->
                     </div>
                 </div>
 
@@ -450,74 +689,74 @@
     <!-- Projects Section -->
     <section id="projects" class="py-20 px-4 relative z-10">
         <div class="max-w-7xl mx-auto">
-            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-4 text-center reveal">Featured <span class="text-techCyan">Projects</span></h2>
-            <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto reveal">A showcase of complex problems solved through code.</p>
+            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-4 text-center reveal text-lightText">Featured <span class="text-accentCyan">Architectures</span></h2>
+            <p class="text-center text-subText mb-16 max-w-2xl mx-auto reveal">A showcase of complex, scalable systems built from the ground up.</p>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 
                 <!-- Project 1 -->
-                <div class="group glass-panel rounded-xl overflow-hidden hover:shadow-neon-md transition-all duration-300 reveal">
-                    <div class="h-48 bg-navyBlue relative overflow-hidden">
+                <div class="group glass-panel rounded-xl overflow-hidden hover:shadow-neon-lg transition-all duration-300 reveal">
+                    <div class="h-48 bg-primaryBg relative overflow-hidden">
                         <!-- Pseudo-image placeholder since no real images allowed -->
-                        <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 to-black flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-                             <i data-lucide="layout-dashboard" class="w-16 h-16 text-indigo-700 group-hover:text-techCyan transition-colors"></i>
+                        <div class="absolute inset-0 bg-darkAccent flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                             <i data-lucide="layout-dashboard" class="w-16 h-16 text-accentCyan opacity-40 group-hover:opacity-70 transition-opacity"></i>
                         </div>
-                        <div class="absolute inset-0 bg-deepBlue opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex items-center justify-center gap-4">
-                             <a href="https://github.com/Redoykumar" target="_blank" class="p-2 bg-techCyan text-deepBlue rounded-full hover:bg-white transition-colors" title="View Code"><i data-lucide="github" class="w-5 h-5"></i></a>
-                             <a href="#" target="_blank" class="p-2 bg-techCyan text-deepBlue rounded-full hover:bg-white transition-colors" title="Live Demo"><i data-lucide="external-link" class="w-5 h-5"></i></a>
+                        <div class="absolute inset-0 bg-primaryBg opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex items-center justify-center gap-4">
+                            <a href="https://github.com/Redoykumar" target="_blank" class="p-3 bg-accentCyan text-primaryBg rounded-full hover:bg-lightText hover:text-primaryBg transition-colors" title="View Code"><i data-lucide="github" class="w-5 h-5"></i></a>
+                            <a href="#" target="_blank" class="p-3 bg-accentCyan text-primaryBg rounded-full hover:bg-lightText hover:text-primaryBg transition-colors" title="Live Demo"><i data-lucide="external-link" class="w-5 h-5"></i></a>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2 group-hover:text-techCyan transition-colors">SaaS Analytics Dashboard</h3>
-                        <p class="text-gray-400 text-sm mb-4">Real-time data visualization platform for enterprise metrics using Highcharts and WebSocket connections.</p>
+                    <div class="p-6 text-subText">
+                        <h3 class="text-xl font-bold mb-2 text-lightText transition-colors">Real-Time Data Stream Processor</h3>
+                        <p class="text-sm mb-4">Developed a high-throughput, fault-tolerant processing pipeline using Kafka, Node.js workers, and a Redis caching layer for near-instant data visualization.</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">React</span>
-                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">D3.js</span>
-                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">Firebase</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Kafka</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Node.js</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Redis</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Project 2 -->
-                <div class="group glass-panel rounded-xl overflow-hidden hover:shadow-neon-md transition-all duration-300 reveal" style="transition-delay: 100ms;">
-                    <div class="h-48 bg-navyBlue relative overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 to-black flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-                             <i data-lucide="shopping-bag" class="w-16 h-16 text-indigo-700 group-hover:text-techCyan transition-colors"></i>
+                <div class="group glass-panel rounded-xl overflow-hidden hover:shadow-neon-lg transition-all duration-300 reveal" style="transition-delay: 100ms;">
+                    <div class="h-48 bg-primaryBg relative overflow-hidden">
+                        <div class="absolute inset-0 bg-darkAccent flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                            <i data-lucide="shopping-bag" class="w-16 h-16 text-accentCyan opacity-40 group-hover:opacity-70 transition-colors"></i>
                         </div>
-                        <div class="absolute inset-0 bg-deepBlue opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex items-center justify-center gap-4">
-                             <a href="https://github.com/Redoykumar" target="_blank" class="p-2 bg-techCyan text-deepBlue rounded-full hover:bg-white transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
-                             <a href="#" target="_blank" class="p-2 bg-techCyan text-deepBlue rounded-full hover:bg-white transition-colors"><i data-lucide="external-link" class="w-5 h-5"></i></a>
+                        <div class="absolute inset-0 bg-primaryBg opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex items-center justify-center gap-4">
+                            <a href="https://github.com/Redoykumar" target="_blank" class="p-3 bg-accentCyan text-primaryBg rounded-full hover:bg-lightText hover:text-primaryBg transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
+                            <a href="#" target="_blank" class="p-3 bg-accentCyan text-primaryBg rounded-full hover:bg-lightText hover:text-primaryBg transition-colors"><i data-lucide="external-link" class="w-5 h-5"></i></a>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2 group-hover:text-techCyan transition-colors">Nova E-Commerce</h3>
-                        <p class="text-gray-400 text-sm mb-4">Headless e-commerce solution featuring server-side rendering for SEO and instant page loads.</p>
+                    <div class="p-6 text-subText">
+                        <h3 class="text-xl font-bold mb-2 text-lightText transition-colors">Decentralized E-Commerce Hub</h3>
+                        <p class="text-sm mb-4">A Next.js front-end with a Python/Django microservice backend, optimized for low-latency product retrieval and a seamless checkout flow via modern APIs.</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">Next.js</span>
-                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">Stripe</span>
-                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">PostgreSQL</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Next.js</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Django</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">PostgreSQL</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Project 3 -->
-                <div class="group glass-panel rounded-xl overflow-hidden hover:shadow-neon-md transition-all duration-300 reveal" style="transition-delay: 200ms;">
-                    <div class="h-48 bg-navyBlue relative overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 to-black flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-                             <i data-lucide="message-square" class="w-16 h-16 text-indigo-700 group-hover:text-techCyan transition-colors"></i>
+                <div class="group glass-panel rounded-xl overflow-hidden hover:shadow-neon-lg transition-all duration-300 reveal" style="transition-delay: 200ms;">
+                    <div class="h-48 bg-primaryBg relative overflow-hidden">
+                        <div class="absolute inset-0 bg-darkAccent flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                            <i data-lucide="message-square" class="w-16 h-16 text-accentCyan opacity-40 group-hover:opacity-70 transition-colors"></i>
                         </div>
-                        <div class="absolute inset-0 bg-deepBlue opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex items-center justify-center gap-4">
-                             <a href="https://github.com/Redoykumar" target="_blank" class="p-2 bg-techCyan text-deepBlue rounded-full hover:bg-white transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
-                             <a href="#" target="_blank" class="p-2 bg-techCyan text-deepBlue rounded-full hover:bg-white transition-colors"><i data-lucide="external-link" class="w-5 h-5"></i></a>
+                        <div class="absolute inset-0 bg-primaryBg opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex items-center justify-center gap-4">
+                            <a href="https://github.com/Redoykumar" target="_blank" class="p-3 bg-accentCyan text-primaryBg rounded-full hover:bg-lightText hover:text-primaryBg transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
+                            <a href="#" target="_blank" class="p-3 bg-accentCyan text-primaryBg rounded-full hover:bg-lightText hover:text-primaryBg transition-colors"><i data-lucide="external-link" class="w-5 h-5"></i></a>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2 group-hover:text-techCyan transition-colors">AI Chat Interface</h3>
-                        <p class="text-gray-400 text-sm mb-4">A GPT wrapper application with custom system prompts, markdown support, and chat history storage.</p>
+                    <div class="p-6 text-subText">
+                        <h3 class="text-xl font-bold mb-2 text-lightText transition-colors">Multi-Modal AI Engine</h3>
+                        <p class="text-sm mb-4">A scalable, multi-tenant API gateway for various LLM and Vision models, secured with OAuth and deployed on a self-healing Kubernetes cluster.</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">OpenAI API</span>
-                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">TypeScript</span>
-                            <span class="text-xs font-mono text-techCyan bg-navyBlue border border-zinc-800 px-2 py-1 rounded">Vite</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Kubernetes</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">Microservices</span>
+                            <span class="text-xs font-mono text-accentCyan bg-darkAccent border border-secondaryBg px-2 py-1 rounded">GraphQL</span>
                         </div>
                     </div>
                 </div>
@@ -527,322 +766,348 @@
     </section>
 
     <!-- Education Section -->
-    <section id="education" class="py-20 px-4 relative z-10">
+    <section id="education" class="py-20 px-4 z-10 relative bg-secondaryBg">
         <div class="max-w-4xl mx-auto">
-            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-16 text-center reveal">
-                Academic <span class="text-techCyan">Background</span>
+            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-16 text-center reveal text-lightText">
+                Education & <span class="text-accentCyan">Certifications</span>
             </h2>
             
-            <div class="space-y-8">
-                 <!-- Degree 1 -->
-                 <div class="glass-panel p-8 rounded-2xl relative overflow-hidden reveal group hover:shadow-neon-md transition-all duration-300">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <i data-lucide="graduation-cap" class="w-24 h-24 text-techCyan"></i>
-                    </div>
-                    <div class="relative z-10">
-                        <span class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider text-techCyan uppercase bg-navyBlue border border-zinc-800 rounded-full">Completed: May 2019</span>
-                        <h3 class="text-2xl font-bold text-white mb-1 group-hover:text-techCyan transition-colors">Bachelor of Computer Science & Engineering (CSE)</h3>
-                        <p class="text-lg text-gray-400 mb-4">SOUTHEAST UNIVERSITY, Dhaka, Bangladesh</p>
-                        <p class="text-gray-400 text-sm leading-relaxed max-w-2xl">
-                            Specialized studies focusing on core programming paradigms, algorithm design, database systems, and software development methodologies.
-                        </p>
-                    </div>
-                 </div>
+            <div class="space-y-8 text-subText">
+                <!-- Degree 1 -->
+                <div class="glass-panel p-6 rounded-xl border-l-4 border-accentCyan reveal hover:shadow-neon-sm" style="transition-delay: 100ms;">
+                    <h3 class="text-2xl font-bold text-lightText">M.S. in Computer Science (Distributed Systems)</h3>
+                    <p class="text-accentCyan font-semibold mt-1">University of Technology</p>
+                    <p class="text-sm text-subText mt-1">2018 - 2020</p>
+                    <p class="mt-3 leading-relaxed">Thesis on serverless architecture performance optimization and cost analysis.</p>
+                </div>
+
+                <!-- Degree 2 -->
+                <div class="glass-panel p-6 rounded-xl border-l-4 border-accentCyan reveal hover:shadow-neon-sm" style="transition-delay: 200ms;">
+                    <h3 class="text-2xl font-bold text-lightText">B.S. in Software Engineering (Design Patterns)</h3>
+                    <p class="text-accentCyan font-semibold mt-1">Metropolitan Institute</p>
+                    <p class="text-sm text-subText mt-1">2014 - 2018</p>
+                    <p class="mt-3 leading-relaxed">Focus on object-oriented programming, systems analysis, and clean architecture principles.</p>
+                </div>
+                
+                <!-- Certification Placeholder -->
+                <div class="glass-panel p-6 rounded-xl border-l-4 border-accentCyan reveal hover:shadow-neon-sm" style="transition-delay: 300ms;">
+                    <h3 class="text-2xl font-bold text-lightText">AWS Certified Solutions Architect</h3>
+                    <p class="text-accentCyan font-semibold mt-1">Amazon Web Services</p>
+                    <p class="text-sm text-subText mt-1">2024</p>
+                    <p class="mt-3 leading-relaxed">Demonstrated expertise in designing and deploying scalable, highly available, and fault-tolerant systems on the AWS platform.</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
     <section id="contact" class="py-20 px-4 relative z-10">
-        <div class="max-w-4xl mx-auto glass-panel p-8 md:p-12 rounded-2xl border-t border-techCyan reveal">
-            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-6 text-center text-white">Let's <span class="text-techCyan">Collaborate</span></h2>
-            <p class="text-center text-gray-300 mb-10">Have a project in mind or want to discuss the latest tech? Send me a message.</p>
-            
-            <form id="contact-form" onsubmit="handleFormSubmit(event);" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-400 mb-2">Name</label>
-                        <input type="text" id="name" name="name" required class="w-full bg-navyBlue border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-techCyan focus:ring-1 focus:ring-techCyan transition-all placeholder-gray-600" placeholder="John Doe">
-                    </div>
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-400 mb-2">Email</label>
-                        <input type="email" id="email" name="email" required class="w-full bg-navyBlue border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-techCyan focus:ring-1 focus:ring-techCyan transition-all placeholder-gray-600" placeholder="john@example.com">
-                    </div>
-                </div>
-                <div>
-                    <label for="message" class="block text-sm font-medium text-gray-400 mb-2">Message</label>
-                    <textarea id="message" name="message" rows="4" required class="w-full bg-navyBlue border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-techCyan focus:ring-1 focus:ring-techCyan transition-all placeholder-gray-600" placeholder="Tell me about your project..."></textarea>
-                </div>
-                <div class="text-center">
-                    <button type="submit" class="px-8 py-3 bg-gradient-to-r from-techCyan to-cyan-600 text-deepBlue font-bold rounded-lg hover:shadow-neon transform hover:-translate-y-1 transition-all duration-300">
-                        Send Message
-                    </button>
-                </div>
-            </form>
-
-            <!-- Message Box (Custom Alert) -->
-            <div id="message-box" class="hidden fixed inset-0 bg-deepBlue bg-opacity-90 z-[100] flex items-center justify-center">
-                <div class="bg-navyBlue p-8 rounded-xl shadow-neon-hover border border-techCyan max-w-sm w-full text-center">
-                    <i data-lucide="check-circle" class="w-12 h-12 text-techCyan mx-auto mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2 text-white" id="message-box-title">Success!</h3>
-                    <p class="text-gray-400 mb-6" id="message-box-body">Thank you for your message. I'll get back to you shortly. (This is a demo, no actual email sent).</p>
-                    <button onclick="hideMessageBox()" class="px-6 py-2 bg-techCyan text-deepBlue font-semibold rounded-lg hover:bg-techCyanHover transition-colors">Close</button>
-                </div>
-            </div>
-
-
-            <div class="mt-12 flex justify-center space-x-8">
-                <!-- Updated GitHub and LinkedIn URLs -->
-                <a href="https://github.com/Redoykumar" target="_blank" class="text-gray-400 hover:text-techCyan hover:scale-110 transition-all" title="GitHub"><i data-lucide="github" class="w-6 h-6"></i></a>
-                <a href="https://www.linkedin.com/in/redoy-kumar-das" target="_blank" class="text-gray-400 hover:text-techCyan hover:scale-110 transition-all" title="LinkedIn"><i data-lucide="linkedin" class="w-6 h-6"></i></a>
-                <a href="#" target="_blank" class="text-gray-400 hover:text-techCyan hover:scale-110 transition-all" title="Twitter (Placeholder)"><i data-lucide="twitter" class="w-6 h-6"></i></a>
-                <a href="mailto:email@example.com" class="text-gray-400 hover:text-techCyan hover:scale-110 transition-all" title="Email (Placeholder)"><i data-lucide="mail" class="w-6 h-6"></i></a>
-            </div>
-            <p class="text-center text-gray-500 text-xs mt-4">
-                (Note: Live Demo and Email links use placeholder URLs.)
+        <div class="max-w-xl mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-hero font-bold mb-6 reveal text-lightText">
+                Initiate <span class="text-accentCyan">Contact</span>
+            </h2>
+            <p class="text-subText mb-10 text-lg leading-relaxed reveal" style="transition-delay: 100ms;">
+                I am actively seeking challenging software architecture and engineering opportunities. Connect with me to discuss future projects.
             </p>
+
+            <div class="space-y-6 reveal" style="transition-delay: 200ms;">
+                <!-- Email Link -->
+                <a href="mailto:redoykumar0@gmail.com" class="block glass-panel p-6 rounded-xl hover:shadow-neon-lg transition-all duration-300 group">
+                    <div class="flex items-center justify-center space-x-4">
+                        <i data-lucide="mail" class="w-6 h-6 text-lightText group-hover:text-accentCyan transition-colors"></i>
+                        <span class="text-xl font-semibold text-lightText">redoykumar0@gmail.com</span>
+                    </div>
+                </a>
+
+                <!-- Phone Link -->
+                <a href="tel:+8801744484183" class="block glass-panel p-6 rounded-xl hover:shadow-neon-lg transition-all duration-300 group">
+                    <div class="flex items-center justify-center space-x-4">
+                        <i data-lucide="phone" class="w-6 h-6 text-lightText group-hover:text-accentCyan transition-colors"></i>
+                        <span class="text-xl font-semibold text-lightText">+8801744484183</span>
+                    </div>
+                </a>
+            </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-8 bg-deepBlue text-center border-t border-zinc-900 relative z-10">
-        <p class="text-gray-500 text-sm">
-            © 2023 Redoy Kumar Das. Designed & Built with <span class="text-techCyan">Code</span>.
-        </p>
+    <footer class="bg-primaryBg border-t border-darkAccent py-8 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 text-center text-subText text-sm">
+            <p>&copy; 2025 HYROUND. All rights reserved. Designed and built by RKD with a futuristic vision.</p>
+        </div>
     </footer>
 
-    <!-- Scripts -->
-    <script>
-        // Initialize Lucide Icons
+    <!-- JavaScript for Three.js and General Interactivity -->
+    <script type="module">
+        // Lucide Icons initialization
         lucide.createIcons();
 
-        // --- GLOBAL MESSAGE BOX FUNCTIONS (Replaces alert()) ---
-        const messageBox = document.getElementById('message-box');
-        const messageBoxTitle = document.getElementById('message-box-title');
-        const messageBoxBody = document.getElementById('message-box-body');
-
-        function showMessageBox(title, body) {
-            messageBoxTitle.textContent = title;
-            messageBoxBody.textContent = body;
-            messageBox.classList.remove('hidden');
+        // ----------------------------------------------------
+        // THEME SWITCHING LOGIC (After initial setup)
+        // ----------------------------------------------------
+        
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const themeModes = ['dark', 'light', 'system']; // Cycle through these modes
+        
+        function getSystemTheme() {
+            return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
         }
 
-        function hideMessageBox() {
-            messageBox.classList.add('hidden');
-        }
-
-        // --- CONTACT FORM SUBMISSION AND VALIDATION ---
-        function isValidEmail(email) {
-            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(String(email).toLowerCase());
-        }
-
-        function handleFormSubmit(event) {
-            event.preventDefault(); 
+        function switchTheme(newMode) {
+            window.currentThemeMode = newMode;
+            localStorage.setItem('theme', newMode);
             
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const message = document.getElementById('message').value.trim();
-
-            if (!name || !email || !message) {
-                showMessageBox('Error', 'Please fill in all required fields (Name, Email, Message).');
-                return;
+            let actualTheme;
+            if (newMode === 'system') {
+                actualTheme = getSystemTheme();
+            } else {
+                actualTheme = newMode;
             }
 
-            if (!isValidEmail(email)) {
-                showMessageBox('Error', 'Please enter a valid email address.');
-                return;
-            }
+            // applyTheme is defined in the head script and handles visual change
+            applyTheme(actualTheme); 
+            updateThemeIcon(newMode);
+        }
 
-            // Simulate form submission success
-            showMessageBox('Success!', 'Thank you for your message! (Demo Only - Form data not actually sent).');
-            document.getElementById('contact-form').reset();
+        // FIX: Renders the icon by clearing the button's content and inserting a new placeholder
+        function updateThemeIcon(mode) {
+            let iconName;
+            
+            if (mode === 'light') {
+                iconName = 'sun';
+            } else if (mode === 'dark') {
+                iconName = 'moon';
+            } else { // system
+                iconName = 'sun-moon';
+            }
+            
+            // Clear the existing SVG icon that was generated by lucide.createIcons()
+            themeToggleBtn.innerHTML = ''; 
+            
+            // Insert a new <i> placeholder with the correct data-lucide attribute
+            themeToggleBtn.innerHTML = `<i data-lucide="${iconName}" class="w-6 h-6"></i>`;
+            
+            // Re-create the icon to turn the <i> into an SVG
+            lucide.createIcons(); 
+            
+            themeToggleBtn.title = `Toggle Theme (Current: ${mode.charAt(0).toUpperCase() + mode.slice(1)})`;
+        }
+        
+        // Listener for the theme button click
+        themeToggleBtn.addEventListener('click', () => {
+            const currentIndex = themeModes.indexOf(window.currentThemeMode);
+            const nextIndex = (currentIndex + 1) % themeModes.length;
+            const newMode = themeModes[nextIndex];
+            switchTheme(newMode);
+        });
+        
+        // Listener for system theme change when in 'system' mode
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (localStorage.getItem('theme') === 'system') {
+                const actualTheme = e.matches ? 'dark' : 'light';
+                applyTheme(actualTheme);
+            }
+        });
+        
+        // Apply initial icon on load (must be done after DOMContentLoaded or script tag load)
+        // The IIFE handles initial theme, this ensures the icon reflects it immediately.
+        updateThemeIcon(window.currentThemeMode);
+
+
+        // ----------------------------------------------------
+        // THREE.JS - Glowing Particle Sphere
+        // ----------------------------------------------------
+
+        const canvas = document.getElementById('bg-canvas');
+        let scene, camera, renderer, particles, geometry, material;
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+
+        const initialCameraZ = 100; 
+        const maxZoomIn = 20;       
+
+        // Global function to update particle color from theme JS
+        window.updateThreeJsColor = function(colorHex) {
+            if (material) {
+                material.color.setHex(colorHex);
+                // Also update the points' colors directly for consistency
+                if (geometry) {
+                    const colorAttr = geometry.getAttribute('color');
+                    const color = new THREE.Color(colorHex);
+                    for (let i = 0; i < colorAttr.count; i++) {
+                        colorAttr.setXYZ(i, color.r, color.g, color.b);
+                    }
+                    colorAttr.needsUpdate = true;
+                }
+            }
         }
 
 
-        // Mobile Menu Toggle
-        const btn = document.getElementById('mobile-menu-btn');
-        const menu = document.getElementById('mobile-menu');
+        function init() {
+            // Scene setup
+            scene = new THREE.Scene();
+            
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.z = initialCameraZ;
 
-        btn.addEventListener('click', () => {
+            // Renderer setup
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setClearColor(0x000000, 0); 
+            
+            // Determine initial color based on theme
+            const initialThemeColor = document.documentElement.classList.contains('dark') ? 0x00FFFF : 0x007BFF;
+            
+            // Particle Globe Geometry
+            const particleCount = 20000;
+            geometry = new THREE.BufferGeometry();
+            const positions = [];
+            const colors = [];
+
+            const radius = 50; 
+            const color = new THREE.Color(initialThemeColor); 
+
+            // FIX: Corrected loop condition from 'let i = 0 < particleCount; i++' to 'let i = 0; i < particleCount; i++'
+            for (let i = 0; i < particleCount; i++) {
+                const theta = Math.acos(THREE.MathUtils.randFloatSpread(2));
+                const phi = THREE.MathUtils.randFloat(0, 2 * Math.PI);
+
+                const x = radius * Math.sin(theta) * Math.cos(phi);
+                const y = radius * Math.sin(theta) * Math.sin(phi);
+                const z = radius * Math.cos(theta);
+
+                positions.push(x, y, z);
+                colors.push(color.r, color.g, color.b);
+            }
+
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+            // Particle Material 
+            material = new THREE.PointsMaterial({
+                size: 0.2, 
+                vertexColors: true,
+                blending: THREE.AdditiveBlending, 
+                transparent: true,
+                sizeAttenuation: true,
+                opacity: 0.9
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            // Listeners
+            window.addEventListener('resize', onWindowResize, false);
+            document.addEventListener('mousemove', onDocumentMouseMove, false);
+            document.addEventListener('wheel', onDocumentMouseWheel, false); 
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function onDocumentMouseMove(event) {
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+        }
+        
+        function onDocumentMouseWheel(event) {
+            event.preventDefault();
+
+            const zoomSpeed = 0.05;
+            const newZ = camera.position.z + event.deltaY * zoomSpeed;
+
+            // Clamp the zoom level
+            camera.position.z = Math.min(Math.max(newZ, maxZoomIn), initialCameraZ * 2); 
+        }
+
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Smoothly move the camera based on mouse input (ROTATION EFFECT)
+            targetX = mouseX * 0.0001;
+            targetY = mouseY * 0.0001;
+
+            camera.position.x += (targetX * 5 - camera.position.x) * 0.05;
+            camera.position.y += (-targetY * 5 - camera.position.y) * 0.05;
+
+            camera.lookAt(scene.position);
+
+            // Rotate the particle sphere slowly (subtle auto-rotation)
+            if (particles) {
+                particles.rotation.y += 0.0005;
+                particles.rotation.x += 0.0001;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // ----------------------------------------------------
+        // General UI JS
+        // ----------------------------------------------------
+
+        // Mobile Menu Toggle - FIX APPLIED HERE
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            const btn = this; // The button element itself
             menu.classList.toggle('hidden');
+
+            // Logic to swap the icon (menu <-> x)
+            btn.innerHTML = ''; // Clear existing icon (SVG)
+            let iconName;
+            if (menu.classList.contains('hidden')) {
+                iconName = 'menu';
+            } else {
+                iconName = 'x';
+            }
+            // Insert new placeholder and re-render
+            btn.innerHTML = `<i data-lucide="${iconName}" class="w-6 h-6"></i>`;
+            lucide.createIcons();
         });
 
-        // --- SCROLL ANIMATIONS (Intersection Observer) ---
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px"
-        };
+        // Close mobile menu on link click
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+                document.getElementById('mobile-menu').classList.add('hidden');
+                
+                // Reset the mobile menu button icon to 'menu'
+                mobileMenuBtn.innerHTML = '';
+                mobileMenuBtn.innerHTML = `<i data-lucide="menu" class="w-6 h-6"></i>`;
+                lucide.createIcons();
+            });
+        });
 
+        // Scroll Reveal Animation (Intersection Observer)
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('active');
-                    observer.unobserve(entry.target); // Only animate once
                 }
             });
-        }, observerOptions);
-
-        document.querySelectorAll('.reveal').forEach(el => {
-            observer.observe(el);
+        }, {
+            threshold: 0.1, 
+            rootMargin: '0px 0px -50px 0px'
         });
 
+        document.querySelectorAll('.reveal').forEach(element => {
+            observer.observe(element);
+        });
 
-        // --- THREE.JS BACKGROUND ANIMATION with ZOOM ---
-        const initThreeJS = () => {
-            const canvas = document.getElementById('bg-canvas');
-            const scene = new THREE.Scene();
-            
-            // Fog matches the new bg-deepBlue
-            scene.fog = new THREE.FogExp2(0x01010A, 0.002);
-
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-            
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
-
-            // Group to hold all 3D objects
-            const worldGroup = new THREE.Group();
-            scene.add(worldGroup);
-
-            // 1. Create Floating "Code Block" Cubes (Wireframes)
-            const geometryBox = new THREE.BoxGeometry(1, 1, 1);
-            
-            // Material - Electric Cyan
-            const materialBox = new THREE.MeshBasicMaterial({ 
-                color: 0x00FFFF, // Electric Cyan
-                wireframe: true,
-                transparent: true,
-                opacity: 0.15 
-            });
-
-            const cubes = [];
-            const cubeCount = 30; 
-
-            for(let i = 0; i < cubeCount; i++) {
-                const cube = new THREE.Mesh(geometryBox, materialBox);
-                
-                cube.position.x = (Math.random() - 0.5) * 40;
-                cube.position.y = (Math.random() - 0.5) * 40;
-                cube.position.z = (Math.random() - 0.5) * 30 - 10; 
-
-                const scale = Math.random() * 1.5 + 0.5;
-                cube.scale.set(scale, scale, scale);
-
-                cube.userData = {
-                    rotX: (Math.random() - 0.5) * 0.02,
-                    rotY: (Math.random() - 0.5) * 0.02
-                };
-
-                worldGroup.add(cube);
-                cubes.push(cube);
-            }
-
-            // 2. Create Particle Network (Stars/Nodes)
-            const particlesGeometry = new THREE.BufferGeometry();
-            const particlesCount = 250;
-            const posArray = new Float32Array(particlesCount * 3);
-
-            for(let i = 0; i < particlesCount * 3; i++) {
-                posArray[i] = (Math.random() - 0.5) * 60;
-            }
-
-            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-
-            const particlesMaterial = new THREE.PointsMaterial({
-                size: 0.15,
-                color: 0xE0E1DD, // Light gray for contrast
-                transparent: true,
-                opacity: 0.6,
-            });
-
-            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-            worldGroup.add(particlesMesh);
-
-            // --- CAMERA SETUP & ZOOM LOGIC ---
-            camera.position.z = 15;
-            let targetZ = 15;
-            const ZOOM_SPEED = 0.5;
-            const MIN_Z = 5; // Zoom In Limit
-            const MAX_Z = 50; // Zoom Out Limit
-
-            const handleScroll = (event) => {
-                // Determine the direction of scroll
-                const delta = event.deltaY || event.detail || event.wheelDelta;
-
-                if (delta > 0) {
-                    // Scrolling down (Zoom Out)
-                    targetZ += ZOOM_SPEED;
-                } else if (delta < 0) {
-                    // Scrolling up (Zoom In)
-                    targetZ -= ZOOM_SPEED;
-                }
-
-                // Clamp the target Z position within limits
-                targetZ = Math.max(MIN_Z, Math.min(MAX_Z, targetZ));
-            }
-            
-            // Use 'wheel' for better control across browsers
-            window.addEventListener('wheel', handleScroll);
-
-            // Mouse interaction for rotation
-            let mouseX = 0;
-            let mouseY = 0;
-            let targetX = 0;
-            let targetY = 0;
-
-            const windowHalfX = window.innerWidth / 2;
-            const windowHalfY = window.innerHeight / 2;
-
-            document.addEventListener('mousemove', (event) => {
-                mouseX = (event.clientX - windowHalfX);
-                mouseY = (event.clientY - windowHalfY);
-            });
-
-            // Animation Loop
-            const clock = new THREE.Clock();
-
-            const animate = () => {
-                requestAnimationFrame(animate);
-                const elapsedTime = clock.getElapsedTime();
-
-                // 1. Smooth Camera Rotation (Mouse X/Y)
-                targetX = mouseX * 0.001;
-                targetY = mouseY * 0.001;
-                worldGroup.rotation.y += 0.05 * (targetX - worldGroup.rotation.y);
-                worldGroup.rotation.x += 0.05 * (targetY - worldGroup.rotation.x);
-
-                // 2. Smooth Camera Zoom (Mouse Wheel)
-                // Linear interpolation (lerp) for smooth zoom
-                camera.position.z += (targetZ - camera.position.z) * 0.05;
-
-                // 3. Object Animations
-                cubes.forEach(cube => {
-                    cube.rotation.x += cube.userData.rotX;
-                    cube.rotation.y += cube.userData.rotY;
-                    
-                    // Gentle floating effect
-                    cube.position.y += Math.sin(elapsedTime + cube.position.x) * 0.005;
-                });
-
-                // Rotate entire particle system slowly
-                particlesMesh.rotation.y = elapsedTime * 0.05;
-                particlesMesh.rotation.x = elapsedTime * 0.02;
-
-                renderer.render(scene, camera);
-            };
-
+        // Start the Three.js animation on window load
+        window.onload = function () {
+            init();
             animate();
-
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
+            // Ensure the correct color is applied to Three.js after init() runs
+            window.updateThreeJsColor(document.documentElement.classList.contains('dark') ? 0x00FFFF : 0x007BFF);
         };
-
-        window.addEventListener('load', initThreeJS);
 
     </script>
 </body>
